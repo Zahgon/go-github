@@ -1,12 +1,3 @@
-// Copyright 2018 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The newrepo command utilizes go-github as a cli tool for
-// creating new repositories. It takes an auth token as
-// an environment variable and creates the new repo under
-// the account affiliated with that token.
 package main
 
 import (

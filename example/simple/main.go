@@ -1,29 +1,15 @@
-// Copyright 2017 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The simple command demonstrates a simple functionality which
-// prompts the user for a GitHub username and lists all the public
-// organization memberships of the specified username.
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 
 	"github.com/google/go-github/v89/github"
 )
 
-// Fetch all the public organizations' membership of a user.
 func fetchOrganizations(username string) ([]*github.Organization, error) {
-	client, err := github.NewClient()
-	if err != nil {
-		return nil, err
-	}
-	orgs, _, err := client.Organizations.List(context.Background(), username, nil)
-	return orgs, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func main() {

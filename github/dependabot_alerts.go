@@ -1,44 +1,30 @@
-// Copyright 2022 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"fmt"
 )
 
-// Dependency represents the vulnerable dependency.
 type Dependency struct {
 	Package      *VulnerabilityPackage `json:"package,omitempty"`
 	ManifestPath *string               `json:"manifest_path,omitempty"`
 	Scope        *string               `json:"scope,omitempty"`
 }
 
-// AdvisoryCVSS represents the advisory pertaining to the Common Vulnerability Scoring System.
 type AdvisoryCVSS struct {
 	Score        *float64 `json:"score,omitempty"`
 	VectorString *string  `json:"vector_string,omitempty"`
 }
 
-// AdvisoryCWEs represent the advisory pertaining to Common Weakness Enumeration.
 type AdvisoryCWEs struct {
 	CWEID *string `json:"cwe_id,omitempty"`
 	Name  *string `json:"name,omitempty"`
 }
 
-// AdvisoryEPSS represents the advisory pertaining to the Exploit Prediction Scoring System.
-//
-// For more information, see:
-// https://github.blog/changelog/2024-10-10-epss-scores-in-the-github-advisory-database/
 type AdvisoryEPSS struct {
 	Percentage float64 `json:"percentage"`
 	Percentile float64 `json:"percentile"`
 }
 
-// DependabotSecurityAdvisory represents the GitHub Security Advisory.
 type DependabotSecurityAdvisory struct {
 	GHSAID          *string                  `json:"ghsa_id,omitempty"`
 	CVEID           *string                  `json:"cve_id,omitempty"`
@@ -56,7 +42,6 @@ type DependabotSecurityAdvisory struct {
 	WithdrawnAt     *Timestamp               `json:"withdrawn_at,omitempty"`
 }
 
-// DependabotAlert represents a Dependabot alert.
 type DependabotAlert struct {
 	Number                *int                        `json:"number,omitempty"`
 	State                 *string                     `json:"state,omitempty"`
@@ -73,23 +58,18 @@ type DependabotAlert struct {
 	DismissedComment      *string                     `json:"dismissed_comment,omitempty"`
 	FixedAt               *Timestamp                  `json:"fixed_at,omitempty"`
 	AutoDismissedAt       *Timestamp                  `json:"auto_dismissed_at,omitempty"`
-	// The repository is always empty for events
+
 	Repository *Repository `json:"repository,omitempty"`
 }
 
-// DependabotAlertState represents the state of a Dependabot alert to update.
 type DependabotAlertState struct {
-	// The state of the Dependabot alert. A dismissed_reason must be provided when setting the state to dismissed.
 	State string `json:"state"`
-	// Required when state is dismissed. A reason for dismissing the alert.
-	// Can be one of: fix_started, inaccurate, no_bandwidth, not_used, tolerable_risk
+
 	DismissedReason *string `json:"dismissed_reason,omitempty"`
-	// An optional comment associated with dismissing the alert.
+
 	DismissedComment *string `json:"dismissed_comment,omitempty"`
 }
 
-// ListAlertsOptions specifies the optional parameters to the DependabotService.ListRepoAlerts
-// and DependabotService.ListOrgAlerts methods.
 type ListAlertsOptions struct {
 	State     *string `url:"state,omitempty"`
 	Severity  *string `url:"severity,omitempty"`
@@ -104,83 +84,30 @@ type ListAlertsOptions struct {
 }
 
 func (s *DependabotService) listAlerts(ctx context.Context, url string, opts *ListAlertsOptions) ([]*DependabotAlert, *Response, error) {
-	u, err := addOptions(url, opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var alerts []*DependabotAlert
-	resp, err := s.client.Do(req, &alerts)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return alerts, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListRepoAlerts lists all Dependabot alerts of a repository.
-//
-// GitHub API docs: https://docs.github.com/rest/dependabot/alerts?apiVersion=2022-11-28#list-dependabot-alerts-for-a-repository
-//
 //meta:operation GET /repos/{owner}/{repo}/dependabot/alerts
 func (s *DependabotService) ListRepoAlerts(ctx context.Context, owner, repo string, opts *ListAlertsOptions) ([]*DependabotAlert, *Response, error) {
-	url := fmt.Sprintf("repos/%v/%v/dependabot/alerts", owner, repo)
-	return s.listAlerts(ctx, url, opts)
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListOrgAlerts lists all Dependabot alerts of an organization.
-//
-// GitHub API docs: https://docs.github.com/rest/dependabot/alerts?apiVersion=2022-11-28#list-dependabot-alerts-for-an-organization
-//
 //meta:operation GET /orgs/{org}/dependabot/alerts
 func (s *DependabotService) ListOrgAlerts(ctx context.Context, org string, opts *ListAlertsOptions) ([]*DependabotAlert, *Response, error) {
-	url := fmt.Sprintf("orgs/%v/dependabot/alerts", org)
-	return s.listAlerts(ctx, url, opts)
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetRepoAlert gets a single repository Dependabot alert.
-//
-// GitHub API docs: https://docs.github.com/rest/dependabot/alerts?apiVersion=2022-11-28#get-a-dependabot-alert
-//
 //meta:operation GET /repos/{owner}/{repo}/dependabot/alerts/{alert_number}
 func (s *DependabotService) GetRepoAlert(ctx context.Context, owner, repo string, number int) (*DependabotAlert, *Response, error) {
-	url := fmt.Sprintf("repos/%v/%v/dependabot/alerts/%v", owner, repo, number)
-	req, err := s.client.NewRequest(ctx, "GET", url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var alert *DependabotAlert
-	resp, err := s.client.Do(req, &alert)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return alert, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// UpdateAlert updates a Dependabot alert.
-//
-// GitHub API docs: https://docs.github.com/rest/dependabot/alerts?apiVersion=2022-11-28#update-a-dependabot-alert
-//
 //meta:operation PATCH /repos/{owner}/{repo}/dependabot/alerts/{alert_number}
 func (s *DependabotService) UpdateAlert(ctx context.Context, owner, repo string, number int, body *DependabotAlertState) (*DependabotAlert, *Response, error) {
-	url := fmt.Sprintf("repos/%v/%v/dependabot/alerts/%v", owner, repo, number)
-	req, err := s.client.NewRequest(ctx, "PATCH", url, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var alert *DependabotAlert
-	resp, err := s.client.Do(req, &alert)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return alert, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

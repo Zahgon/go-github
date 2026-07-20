@@ -1,14 +1,3 @@
-// Copyright 2026 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The contents command utilizes go-github as a CLI tool for
-// downloading the contents of a file in a repository.
-// It takes an inputs of the repository owner, repository name, path to the
-// file in the repository, reference (branch, tag or commit SHA), and output
-// path for the downloaded file. It then uses the Repositories.DownloadContents
-// method to download the file and saves it to the specified output path.
 package main
 
 import (
@@ -62,7 +51,7 @@ func main() {
 	}
 	defer rc.Close()
 
-	f, err := os.Create(outputPath) //#nosec G703 -- path is validated above
+	f, err := os.Create(outputPath)
 	if err != nil {
 		log.Fatalf("Error creating output file: %v", err)
 	}

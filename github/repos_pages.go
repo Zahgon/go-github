@@ -1,17 +1,9 @@
-// Copyright 2014 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"errors"
-	"fmt"
 )
 
-// Pages represents a GitHub Pages site configuration.
 type Pages struct {
 	URL              *string                `json:"url,omitempty"`
 	Status           *string                `json:"status,omitempty"`
@@ -25,18 +17,15 @@ type Pages struct {
 	HTTPSEnforced    *bool                  `json:"https_enforced,omitempty"`
 }
 
-// PagesSource represents a GitHub page's source.
 type PagesSource struct {
 	Branch *string `json:"branch,omitempty"`
 	Path   *string `json:"path,omitempty"`
 }
 
-// PagesError represents a build error for a GitHub Pages site.
 type PagesError struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// PagesBuild represents the build information for a GitHub Pages site.
 type PagesBuild struct {
 	URL       *string     `json:"url,omitempty"`
 	Status    *string     `json:"status,omitempty"`
@@ -48,7 +37,6 @@ type PagesBuild struct {
 	UpdatedAt *Timestamp  `json:"updated_at,omitempty"`
 }
 
-// PagesDomain represents a domain associated with a GitHub Pages site.
 type PagesDomain struct {
 	Host                          *string `json:"host,omitempty"`
 	URI                           *string `json:"uri,omitempty"`
@@ -80,106 +68,48 @@ type PagesDomain struct {
 	CAAError                      *string `json:"caa_error,omitempty"`
 }
 
-// PagesHealthCheckResponse represents the response given for the health check of a GitHub Pages site.
 type PagesHealthCheckResponse struct {
 	Domain    *PagesDomain `json:"domain,omitempty"`
 	AltDomain *PagesDomain `json:"alt_domain,omitempty"`
 }
 
-// PagesHTTPSCertificate represents the HTTPS Certificate information for a GitHub Pages site.
 type PagesHTTPSCertificate struct {
 	State       *string  `json:"state,omitempty"`
 	Description *string  `json:"description,omitempty"`
 	Domains     []string `json:"domains,omitempty"`
-	// GitHub's API doesn't return a standard Timestamp, rather it returns a YYYY-MM-DD string.
+
 	ExpiresAt *string `json:"expires_at,omitempty"`
 }
 
-// createPagesRequest is a subset of Pages and is used internally
-// by EnablePages to pass only the known fields for the endpoint.
 type createPagesRequest struct {
 	BuildType *string      `json:"build_type,omitempty"`
 	Source    *PagesSource `json:"source,omitempty"`
 }
 
-// EnablePages enables GitHub Pages for the named repo.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#create-a-github-pages-site
-//
 //meta:operation POST /repos/{owner}/{repo}/pages
 func (s *RepositoriesService) EnablePages(ctx context.Context, owner, repo string, pages *Pages) (*Pages, *Response, error) {
-	if pages == nil {
-		return nil, nil, errors.New("pages must be provided")
-	}
-
-	u := fmt.Sprintf("repos/%v/%v/pages", owner, repo)
-
-	pagesReq := &createPagesRequest{
-		BuildType: pages.BuildType,
-		Source:    pages.Source,
-	}
-
-	req, err := s.client.NewRequest(ctx, "POST", u, pagesReq)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req.Header.Set("Accept", mediaTypeEnablePagesAPIPreview)
-
-	var enable *Pages
-	resp, err := s.client.Do(req, &enable)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return enable, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// PagesUpdate sets up parameters needed to update a GitHub Pages site.
 type PagesUpdate struct {
-	// CNAME represents a custom domain for the repository.
-	// Leaving CNAME empty will remove the custom domain.
 	CNAME *string `json:"cname"`
-	// BuildType is optional and can either be "legacy" or "workflow".
-	// "workflow" - You are using a github workflow to build your pages.
-	// "legacy"   - You are deploying from a branch.
+
 	BuildType *string `json:"build_type,omitempty"`
-	// Source must include the branch name, and may optionally specify the subdirectory "/docs".
-	// Possible values for Source.Branch are usually "gh-pages", "main", and "master",
-	// or any other existing branch name.
-	// Possible values for Source.Path are: "/", and "/docs".
+
 	Source *PagesSource `json:"source,omitempty"`
-	// Public configures access controls for the site.
-	// If "true", the site will be accessible to anyone on the internet. If "false",
-	// the site will be accessible to anyone with read access to the repository that
-	// published the site.
+
 	Public *bool `json:"public,omitempty"`
-	// HTTPSEnforced specifies whether HTTPS should be enforced for the repository.
+
 	HTTPSEnforced *bool `json:"https_enforced,omitempty"`
 }
 
-// UpdatePages updates GitHub Pages for the named repo.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#update-information-about-a-github-pages-site
-//
 //meta:operation PUT /repos/{owner}/{repo}/pages
 func (s *RepositoriesService) UpdatePages(ctx context.Context, owner, repo string, body *PagesUpdate) (*Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages", owner, repo)
-
-	req, err := s.client.NewRequest(ctx, "PUT", u, body)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// PagesUpdateWithoutCNAME defines parameters for updating a GitHub Pages site on GitHub Enterprise Servers.
-// Sending a request with a CNAME (any value, empty string, or null) results in a 400 error: "Custom domains are not available for GitHub Pages".
 type PagesUpdateWithoutCNAME struct {
 	BuildType     *string      `json:"build_type,omitempty"`
 	Source        *PagesSource `json:"source,omitempty"`
@@ -187,170 +117,50 @@ type PagesUpdateWithoutCNAME struct {
 	HTTPSEnforced *bool        `json:"https_enforced,omitempty"`
 }
 
-// UpdatePagesGHES updates GitHub Pages for the named repo in GitHub Enterprise Servers.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#update-information-about-a-github-pages-site
-//
 //meta:operation PUT /repos/{owner}/{repo}/pages
 func (s *RepositoriesService) UpdatePagesGHES(ctx context.Context, owner, repo string, body *PagesUpdateWithoutCNAME) (*Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages", owner, repo)
-
-	req, err := s.client.NewRequest(ctx, "PUT", u, body)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := s.client.Do(req, nil)
-	if err != nil {
-		return resp, err
-	}
-	return resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// DisablePages disables GitHub Pages for the named repo.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#delete-a-github-pages-site
-//
 //meta:operation DELETE /repos/{owner}/{repo}/pages
 func (s *RepositoriesService) DisablePages(ctx context.Context, owner, repo string) (*Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages", owner, repo)
-	req, err := s.client.NewRequest(ctx, "DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Accept", mediaTypeEnablePagesAPIPreview)
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// GetPagesInfo fetches information about a GitHub Pages site.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#get-a-github-pages-site
-//
 //meta:operation GET /repos/{owner}/{repo}/pages
 func (s *RepositoriesService) GetPagesInfo(ctx context.Context, owner, repo string) (*Pages, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages", owner, repo)
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var site *Pages
-	resp, err := s.client.Do(req, &site)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return site, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListPagesBuilds lists the builds for a GitHub Pages site.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#list-github-pages-builds
-//
 //meta:operation GET /repos/{owner}/{repo}/pages/builds
 func (s *RepositoriesService) ListPagesBuilds(ctx context.Context, owner, repo string, opts *ListOptions) ([]*PagesBuild, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages/builds", owner, repo)
-	u, err := addOptions(u, opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var pages []*PagesBuild
-	resp, err := s.client.Do(req, &pages)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return pages, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetLatestPagesBuild fetches the latest build information for a GitHub pages site.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#get-latest-pages-build
-//
 //meta:operation GET /repos/{owner}/{repo}/pages/builds/latest
 func (s *RepositoriesService) GetLatestPagesBuild(ctx context.Context, owner, repo string) (*PagesBuild, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages/builds/latest", owner, repo)
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var build *PagesBuild
-	resp, err := s.client.Do(req, &build)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return build, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetPageBuild fetches the specific build information for a GitHub pages site.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#get-github-pages-build
-//
 //meta:operation GET /repos/{owner}/{repo}/pages/builds/{build_id}
 func (s *RepositoriesService) GetPageBuild(ctx context.Context, owner, repo string, id int64) (*PagesBuild, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages/builds/%v", owner, repo, id)
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var build *PagesBuild
-	resp, err := s.client.Do(req, &build)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return build, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// RequestPageBuild requests a build of a GitHub Pages site without needing to push new commit.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#request-a-github-pages-build
-//
 //meta:operation POST /repos/{owner}/{repo}/pages/builds
 func (s *RepositoriesService) RequestPageBuild(ctx context.Context, owner, repo string) (*PagesBuild, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages/builds", owner, repo)
-	req, err := s.client.NewRequest(ctx, "POST", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var build *PagesBuild
-	resp, err := s.client.Do(req, &build)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return build, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetPageHealthCheck gets a DNS health check for the CNAME record configured for a repository's GitHub Pages.
-//
-// GitHub API docs: https://docs.github.com/rest/pages/pages?apiVersion=2022-11-28#get-a-dns-health-check-for-github-pages
-//
 //meta:operation GET /repos/{owner}/{repo}/pages/health
 func (s *RepositoriesService) GetPageHealthCheck(ctx context.Context, owner, repo string) (*PagesHealthCheckResponse, *Response, error) {
-	u := fmt.Sprintf("repos/%v/%v/pages/health", owner, repo)
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var healthCheckResponse *PagesHealthCheckResponse
-	resp, err := s.client.Do(req, &healthCheckResponse)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return healthCheckResponse, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

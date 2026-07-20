@@ -1,16 +1,9 @@
-// Copyright 2019 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"fmt"
 )
 
-// AppConfig describes the configuration of a GitHub App.
 type AppConfig struct {
 	ID            *int64     `json:"id,omitempty"`
 	Slug          *string    `json:"slug,omitempty"`
@@ -28,24 +21,8 @@ type AppConfig struct {
 	PEM           *string    `json:"pem,omitempty"`
 }
 
-// CompleteAppManifest completes the App manifest handshake flow for the given
-// code.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#create-a-github-app-from-a-manifest
-//
 //meta:operation POST /app-manifests/{code}/conversions
 func (s *AppsService) CompleteAppManifest(ctx context.Context, code string) (*AppConfig, *Response, error) {
-	u := fmt.Sprintf("app-manifests/%v/conversions", code)
-	req, err := s.client.NewRequest(ctx, "POST", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var cfg *AppConfig
-	resp, err := s.client.Do(req, &cfg)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return cfg, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

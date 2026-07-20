@@ -1,22 +1,11 @@
-// Copyright 2016 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"fmt"
 )
 
-// AppsService provides access to the installation related functions
-// in the GitHub API.
-//
-// GitHub API docs: https://docs.github.com/rest/apps?apiVersion=2022-11-28
 type AppsService service
 
-// App represents a GitHub App.
 type App struct {
 	ID                 *int64                   `json:"id,omitempty"`
 	Slug               *string                  `json:"slug,omitempty"`
@@ -34,7 +23,6 @@ type App struct {
 	InstallationsCount *int                     `json:"installations_count,omitempty"`
 }
 
-// InstallationToken represents an installation token.
 type InstallationToken struct {
 	Token        *string                  `json:"token,omitempty"`
 	ExpiresAt    *Timestamp               `json:"expires_at,omitempty"`
@@ -42,43 +30,22 @@ type InstallationToken struct {
 	Repositories []*Repository            `json:"repositories,omitempty"`
 }
 
-// InstallationTokenOptions allow restricting a token's access to specific repositories.
 type InstallationTokenOptions struct {
-	// The IDs of the repositories that the installation token can access.
-	// Providing repository IDs restricts the access of an installation token to specific repositories.
 	RepositoryIDs []int64 `json:"repository_ids,omitempty"`
 
-	// The names of the repositories that the installation token can access.
-	// Providing repository names restricts the access of an installation token to specific repositories.
 	Repositories []string `json:"repositories,omitempty"`
 
-	// The permissions granted to the access token.
-	// The permissions object includes the permission names and their access type.
 	Permissions *InstallationPermissions `json:"permissions,omitempty"`
 }
 
-// InstallationTokenListRepoOptions allow restricting a token's access to a list of all repositories in an installation.
-// It differs from InstallationTokenOptions as a parameter which does not omit RepositoryIDs if that field is nil or an empty array.
 type InstallationTokenListRepoOptions struct {
-	// The IDs of the repositories that the installation token can access.
-	// Providing repository IDs restricts the access of an installation token to specific repositories.
 	RepositoryIDs []int64 `json:"repository_ids"`
 
-	// The names of the repositories that the installation token can access.
-	// Providing repository names restricts the access of an installation token to specific repositories.
 	Repositories []string `json:"repositories,omitempty"`
 
-	// The permissions granted to the access token.
-	// The permissions object includes the permission names and their access type.
 	Permissions *InstallationPermissions `json:"permissions,omitempty"`
 }
 
-// InstallationPermissions lists the repository and organization permissions for an installation.
-//
-// Permission names taken from:
-//
-//	https://docs.github.com/enterprise-server@3.0/rest/apps#create-an-installation-access-token-for-an-app
-//	https://docs.github.com/rest/apps?apiVersion=2022-11-28#create-an-installation-access-token-for-an-app
 type InstallationPermissions struct {
 	Actions                                 *string `json:"actions,omitempty"`
 	ActionsVariables                        *string `json:"actions_variables,omitempty"`
@@ -170,7 +137,6 @@ type InstallationPermissions struct {
 	Workflows                               *string `json:"workflows,omitempty"`
 }
 
-// InstallationRequest represents a pending GitHub App installation request.
 type InstallationRequest struct {
 	ID        *int64     `json:"id,omitempty"`
 	NodeID    *string    `json:"node_id,omitempty"`
@@ -179,7 +145,6 @@ type InstallationRequest struct {
 	CreatedAt *Timestamp `json:"created_at,omitempty"`
 }
 
-// Installation represents a GitHub Apps installation.
 type Installation struct {
 	ID                     *int64                   `json:"id,omitempty"`
 	NodeID                 *string                  `json:"node_id,omitempty"`
@@ -204,321 +169,118 @@ type Installation struct {
 	SuspendedAt            *Timestamp               `json:"suspended_at,omitempty"`
 }
 
-// Attachment represents a GitHub Apps attachment.
 type Attachment struct {
 	ID    *int64  `json:"id,omitempty"`
 	Title *string `json:"title,omitempty"`
 	Body  *string `json:"body,omitempty"`
 }
 
-// ContentReference represents a reference to a URL in an issue or pull request.
 type ContentReference struct {
 	ID        *int64  `json:"id,omitempty"`
 	NodeID    *string `json:"node_id,omitempty"`
 	Reference *string `json:"reference,omitempty"`
 }
 
-func (i Installation) String() string {
-	return Stringify(i)
-}
+func (i Installation) String() string { _ = "STUB: not implemented"; return "" }
 
-// Get a single GitHub App. Passing the empty string will get
-// the authenticated GitHub App.
-//
-// Note: appSlug is just the URL-friendly name of your GitHub App.
-// You can find this on the settings page for your GitHub App
-// (e.g., https://github.com/settings/apps/:app_slug).
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-an-app
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-the-authenticated-app
-//
 //meta:operation GET /app
 //meta:operation GET /apps/{app_slug}
 func (s *AppsService) Get(ctx context.Context, appSlug string) (*App, *Response, error) {
-	var u string
-	if appSlug != "" {
-		u = fmt.Sprintf("apps/%v", appSlug)
-	} else {
-		u = "app"
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var app *App
-	resp, err := s.client.Do(req, &app)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return app, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListInstallationRequests lists the pending installation requests that the current GitHub App has.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#list-installation-requests-for-the-authenticated-app
-//
 //meta:operation GET /app/installation-requests
 func (s *AppsService) ListInstallationRequests(ctx context.Context, opts *ListOptions) ([]*InstallationRequest, *Response, error) {
-	u, err := addOptions("app/installation-requests", opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var i []*InstallationRequest
-	resp, err := s.client.Do(req, &i)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return i, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListInstallations lists the installations that the current GitHub App has.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#list-installations-for-the-authenticated-app
-//
 //meta:operation GET /app/installations
 func (s *AppsService) ListInstallations(ctx context.Context, opts *ListOptions) ([]*Installation, *Response, error) {
-	u, err := addOptions("app/installations", opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var i []*Installation
-	resp, err := s.client.Do(req, &i)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return i, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetInstallation returns the specified installation.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-an-installation-for-the-authenticated-app
-//
 //meta:operation GET /app/installations/{installation_id}
 func (s *AppsService) GetInstallation(ctx context.Context, id int64) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("app/installations/%v", id))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ListUserInstallations lists installations that are accessible to the authenticated user.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/installations?apiVersion=2022-11-28#list-app-installations-accessible-to-the-user-access-token
-//
 //meta:operation GET /user/installations
 func (s *AppsService) ListUserInstallations(ctx context.Context, opts *ListOptions) ([]*Installation, *Response, error) {
-	u, err := addOptions("user/installations", opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var i struct {
-		Installations []*Installation `json:"installations"`
-	}
-	resp, err := s.client.Do(req, &i)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return i.Installations, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// SuspendInstallation suspends the specified installation.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#suspend-an-app-installation
-//
 //meta:operation PUT /app/installations/{installation_id}/suspended
 func (s *AppsService) SuspendInstallation(ctx context.Context, id int64) (*Response, error) {
-	u := fmt.Sprintf("app/installations/%v/suspended", id)
-
-	req, err := s.client.NewRequest(ctx, "PUT", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// UnsuspendInstallation unsuspends the specified installation.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#unsuspend-an-app-installation
-//
 //meta:operation DELETE /app/installations/{installation_id}/suspended
 func (s *AppsService) UnsuspendInstallation(ctx context.Context, id int64) (*Response, error) {
-	u := fmt.Sprintf("app/installations/%v/suspended", id)
-
-	req, err := s.client.NewRequest(ctx, "DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// DeleteInstallation deletes the specified installation.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#delete-an-installation-for-the-authenticated-app
-//
 //meta:operation DELETE /app/installations/{installation_id}
 func (s *AppsService) DeleteInstallation(ctx context.Context, id int64) (*Response, error) {
-	u := fmt.Sprintf("app/installations/%v", id)
-
-	req, err := s.client.NewRequest(ctx, "DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// CreateInstallationToken creates a new installation token.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#create-an-installation-access-token-for-an-app
-//
 //meta:operation POST /app/installations/{installation_id}/access_tokens
 func (s *AppsService) CreateInstallationToken(ctx context.Context, id int64, body *InstallationTokenOptions) (*InstallationToken, *Response, error) {
-	u := fmt.Sprintf("app/installations/%v/access_tokens", id)
-
-	req, err := s.client.NewRequest(ctx, "POST", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var t *InstallationToken
-	resp, err := s.client.Do(req, &t)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return t, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// CreateInstallationTokenListRepos creates a new installation token with a list of all repositories in an installation which is not possible with CreateInstallationToken.
-//
-// It differs from CreateInstallationToken by taking InstallationTokenListRepoOptions as a parameter which does not omit RepositoryIDs if that field is nil or an empty array.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#create-an-installation-access-token-for-an-app
-//
 //meta:operation POST /app/installations/{installation_id}/access_tokens
 func (s *AppsService) CreateInstallationTokenListRepos(ctx context.Context, id int64, body *InstallationTokenListRepoOptions) (*InstallationToken, *Response, error) {
-	u := fmt.Sprintf("app/installations/%v/access_tokens", id)
-
-	req, err := s.client.NewRequest(ctx, "POST", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var t *InstallationToken
-	resp, err := s.client.Do(req, &t)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return t, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// CreateAttachment creates a new attachment on user comment containing a url.
-//
-// Deprecated: This endpoint has been deprecated by GitHub.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.3/rest/reference/apps#create-a-content-attachment
-//
 //meta:operation POST /repos/{owner}/{repo}/content_references/{content_reference_id}/attachments
 func (s *AppsService) CreateAttachment(ctx context.Context, contentReferenceID int64, title, body string) (*Attachment, *Response, error) {
-	u := fmt.Sprintf("content_references/%v/attachments", contentReferenceID)
-	payload := &Attachment{Title: &title, Body: &body}
-	req, err := s.client.NewRequest(ctx, "POST", u, payload)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	req.Header.Set("Accept", mediaTypeContentAttachmentsPreview)
-
-	var m *Attachment
-	resp, err := s.client.Do(req, &m)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return m, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetOrganizationInstallation finds the organization's installation information.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-an-organization-installation-for-the-authenticated-app
-//
 //meta:operation GET /orgs/{org}/installation
 func (s *AppsService) GetOrganizationInstallation(ctx context.Context, org string) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("orgs/%v/installation", org))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetEnterpriseInstallation finds the enterprise's installation information.
-//
-// GitHub API docs: https://docs.github.com/enterprise-cloud@latest/rest/apps/apps?apiVersion=2022-11-28#get-an-enterprise-installation-for-the-authenticated-app
-//
 //meta:operation GET /enterprises/{enterprise}/installation
 func (s *AppsService) GetEnterpriseInstallation(ctx context.Context, enterprise string) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("enterprises/%v/installation", enterprise))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetRepositoryInstallation finds the repository's installation information.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-a-repository-installation-for-the-authenticated-app
-//
 //meta:operation GET /repos/{owner}/{repo}/installation
 func (s *AppsService) GetRepositoryInstallation(ctx context.Context, owner, repo string) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("repos/%v/%v/installation", owner, repo))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetRepositoryInstallationByID finds the repository's installation information.
-//
-// Note: GetRepositoryInstallationByID uses the undocumented GitHub API endpoint "GET /repositories/{repository_id}/installation".
-//
 //meta:operation GET /repositories/{repository_id}/installation
 func (s *AppsService) GetRepositoryInstallationByID(ctx context.Context, id int64) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("repositories/%v/installation", id))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// GetUserInstallation finds the user's installation information.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/apps?apiVersion=2022-11-28#get-a-user-installation-for-the-authenticated-app
-//
 //meta:operation GET /users/{username}/installation
 func (s *AppsService) GetUserInstallation(ctx context.Context, user string) (*Installation, *Response, error) {
-	return s.getInstallation(ctx, fmt.Sprintf("users/%v/installation", user))
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 func (s *AppsService) getInstallation(ctx context.Context, url string) (*Installation, *Response, error) {
-	req, err := s.client.NewRequest(ctx, "GET", url, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var i *Installation
-	resp, err := s.client.Do(req, &i)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return i, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

@@ -1,15 +1,3 @@
-// Copyright 2022 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// listenvironments is an example of how to use ListEnvironments method with EnvironmentListOptions.
-// It's runnable with the following command:
-//
-//	export GITHUB_AUTH_TOKEN=your_token
-//	export GITHUB_REPOSITORY_OWNER=your_owner
-//	export GITHUB_REPOSITORY_NAME=your_repo
-//	go run .
 package main
 
 import (
@@ -48,6 +36,5 @@ func main() {
 		log.Fatal("Unexpected number of environments returned")
 	}
 
-	// The number of environments here should be equal to expectedPageSize
 	fmt.Printf("%v environments returned\n", len(envResponse.Environments))
 }

@@ -1,19 +1,13 @@
-// Copyright 2020 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"encoding/json"
 )
 
-// Package represents a GitHub package.
 type Package struct {
 	ID          *int64      `json:"id,omitempty"`
 	Name        *string     `json:"name,omitempty"`
-	PackageType *string     `json:"package_type,omitempty"` // One of "npm", "maven", "rubygems", "docker", "nuget", "container". For webhook events "container" is "CONTAINER"
+	PackageType *string     `json:"package_type,omitempty"`
 	HTMLURL     *string     `json:"html_url,omitempty"`
 	Visibility  *string     `json:"visibility,omitempty"`
 	Owner       *User       `json:"owner,omitempty"`
@@ -21,23 +15,18 @@ type Package struct {
 	CreatedAt   *Timestamp  `json:"created_at,omitempty"`
 	UpdatedAt   *Timestamp  `json:"updated_at,omitempty"`
 
-	// The following are only populated for webhook events
 	Namespace      *string          `json:"namespace,omitempty"`
 	Description    *string          `json:"description,omitempty"`
 	Ecosystem      *string          `json:"ecosystem,omitempty"`
 	PackageVersion *PackageVersion  `json:"package_version,omitempty"`
 	Registry       *PackageRegistry `json:"registry,omitempty"`
 
-	// The following are NOT populated for webhook events
 	URL          *string `json:"url,omitempty"`
 	VersionCount *int64  `json:"version_count,omitempty"`
 }
 
-func (p Package) String() string {
-	return Stringify(p)
-}
+func (p Package) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageVersion represents a GitHub package version.
 type PackageVersion struct {
 	ID             *int64          `json:"id,omitempty"`
 	Name           *string         `json:"name,omitempty"`
@@ -47,12 +36,11 @@ type PackageVersion struct {
 	Description    *string         `json:"description,omitempty"`
 	CreatedAt      *Timestamp      `json:"created_at,omitempty"`
 	UpdatedAt      *Timestamp      `json:"updated_at,omitempty"`
-	Metadata       json.RawMessage `json:"metadata,omitempty"` // For webhook events this will be []interface, else it will be of type PackageMetadata
+	Metadata       json.RawMessage `json:"metadata,omitempty"`
 
-	// The following are only populated for webhook events
 	Version             *string                        `json:"version,omitempty"`
 	Summary             *string                        `json:"summary,omitempty"`
-	Body                json.RawMessage                `json:"body,omitempty"` // Can either be a string or of type PackageVersionBody
+	Body                json.RawMessage                `json:"body,omitempty"`
 	BodyHTML            *string                        `json:"body_html,omitempty"`
 	Release             *PackageRelease                `json:"release,omitempty"`
 	Manifest            *string                        `json:"manifest,omitempty"`
@@ -73,63 +61,31 @@ type PackageVersion struct {
 	SourceURL           *string                        `json:"source_url,omitempty"`
 	InstallationCommand *string                        `json:"installation_command,omitempty"`
 
-	// The following are NOT populated for webhook events
 	DeletedAt *Timestamp `json:"deleted_at,omitempty"`
 }
 
-// GetBody returns the body field as a string if it's valid.
 func (pv *PackageVersion) GetBody() (body string, ok bool) {
-	if pv == nil || pv.Body == nil {
-		return "", false
-	}
-
-	if err := json.Unmarshal(pv.Body, &body); err != nil {
-		return "", false
-	}
-
-	return body, true
+	_ = "STUB: not implemented"
+	return "", false
 }
 
-// GetBodyAsPackageVersionBody returns the body field as a PackageVersionBody if it's valid.
 func (pv *PackageVersion) GetBodyAsPackageVersionBody() (body *PackageVersionBody, ok bool) {
-	if pv == nil || pv.Body == nil {
-		return nil, false
-	}
-
-	if err := json.Unmarshal(pv.Body, &body); err != nil {
-		return nil, false
-	}
-
-	return body, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
 
-// GetMetadata returns the metadata field as PackageMetadata if it's valid.
 func (pv *PackageVersion) GetMetadata() (metadata *PackageMetadata, ok bool) {
-	if pv == nil || pv.Metadata == nil {
-		return nil, false
-	}
-
-	if err := json.Unmarshal(pv.Metadata, &metadata); err != nil {
-		return nil, false
-	}
-
-	return metadata, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
 
-// GetRawMetadata returns the metadata field as a json.RawMessage.
 func (pv *PackageVersion) GetRawMetadata() json.RawMessage {
-	if pv == nil || pv.Metadata == nil {
-		return json.RawMessage{}
-	}
-
-	return pv.Metadata
+	_ = "STUB: not implemented"
+	return *new(json.RawMessage)
 }
 
-func (pv PackageVersion) String() string {
-	return Stringify(pv)
-}
+func (pv PackageVersion) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageRelease represents a GitHub package version release.
 type PackageRelease struct {
 	URL             *string    `json:"url,omitempty"`
 	HTMLURL         *string    `json:"html_url,omitempty"`
@@ -144,11 +100,8 @@ type PackageRelease struct {
 	PublishedAt     *Timestamp `json:"published_at,omitempty"`
 }
 
-func (r PackageRelease) String() string {
-	return Stringify(r)
-}
+func (r PackageRelease) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageFile represents a GitHub package version release file.
 type PackageFile struct {
 	DownloadURL *string    `json:"download_url,omitempty"`
 	ID          *int64     `json:"id,omitempty"`
@@ -164,11 +117,8 @@ type PackageFile struct {
 	UpdatedAt   *Timestamp `json:"updated_at,omitempty"`
 }
 
-func (pf PackageFile) String() string {
-	return Stringify(pf)
-}
+func (pf PackageFile) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageRegistry represents a GitHub package registry.
 type PackageRegistry struct {
 	AboutURL *string `json:"about_url,omitempty"`
 	Name     *string `json:"name,omitempty"`
@@ -177,55 +127,38 @@ type PackageRegistry struct {
 	Vendor   *string `json:"vendor,omitempty"`
 }
 
-func (r PackageRegistry) String() string {
-	return Stringify(r)
-}
+func (r PackageRegistry) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageListOptions represents the optional list options for a package.
 type PackageListOptions struct {
-	// Visibility of packages "public", "internal" or "private".
 	Visibility *string `url:"visibility,omitempty"`
 
-	// PackageType represents the type of package.
-	// It can be one of "npm", "maven", "rubygems", "nuget", "docker", or "container".
 	PackageType *string `url:"package_type,omitempty"`
 
-	// State of package either "active" or "deleted".
 	State *string `url:"state,omitempty"`
 
 	ListOptions
 }
 
-// PackageMetadata represents metadata from a package.
 type PackageMetadata struct {
 	PackageType *string                   `json:"package_type,omitempty"`
 	Container   *PackageContainerMetadata `json:"container,omitempty"`
 }
 
-func (r PackageMetadata) String() string {
-	return Stringify(r)
-}
+func (r PackageMetadata) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageContainerMetadata represents container metadata for docker container packages.
 type PackageContainerMetadata struct {
 	Tags []string `json:"tags,omitempty"`
 }
 
-func (r PackageContainerMetadata) String() string {
-	return Stringify(r)
-}
+func (r PackageContainerMetadata) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageVersionBody represents the body field of a package version.
 type PackageVersionBody struct {
 	Repo *Repository             `json:"repository,omitempty"`
 	Info *PackageVersionBodyInfo `json:"info,omitempty"`
 }
 
-func (b PackageVersionBody) String() string {
-	return Stringify(b)
-}
+func (b PackageVersionBody) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageVersionBodyInfo represents the info field of a PackageVersionBody.
 type PackageVersionBodyInfo struct {
 	Type       *string `json:"type,omitempty"`
 	OID        *string `json:"oid,omitempty"`
@@ -236,44 +169,31 @@ type PackageVersionBodyInfo struct {
 	Collection *bool   `json:"collection,omitempty"`
 }
 
-func (bi PackageVersionBodyInfo) String() string {
-	return Stringify(bi)
-}
+func (bi PackageVersionBodyInfo) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageEventContainerMetadata represents metadata for container packages as part of a webhook event.
-// See also PackageContainerMetadata.
 type PackageEventContainerMetadata struct {
 	Labels   map[string]any                    `json:"labels,omitempty"`
 	Manifest map[string]any                    `json:"manifest,omitempty"`
 	Tag      *PackageEventContainerMetadataTag `json:"tag,omitempty"`
 }
 
-func (m PackageEventContainerMetadata) String() string {
-	return Stringify(m)
-}
+func (m PackageEventContainerMetadata) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageEventContainerMetadataTag represents a tag of a GitHub container package.
 type PackageEventContainerMetadataTag struct {
 	Name   *string `json:"name,omitempty"`
 	Digest *string `json:"digest,omitempty"`
 }
 
-func (mt PackageEventContainerMetadataTag) String() string {
-	return Stringify(mt)
-}
+func (mt PackageEventContainerMetadataTag) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageNugetMetadata represents nuget metadata for a GitHub package.
 type PackageNugetMetadata struct {
-	ID    json.RawMessage `json:"id,omitempty"` // Can either be an int64 or string
+	ID    json.RawMessage `json:"id,omitempty"`
 	Name  *string         `json:"name,omitempty"`
-	Value json.RawMessage `json:"value,omitempty"` // Can either be a bool, string, integer or object
+	Value json.RawMessage `json:"value,omitempty"`
 }
 
-func (nm PackageNugetMetadata) String() string {
-	return Stringify(nm)
-}
+func (nm PackageNugetMetadata) String() string { _ = "STUB: not implemented"; return "" }
 
-// PackageNPMMetadata represents NPM metadata for a GitHub package.
 type PackageNPMMetadata struct {
 	Name                 *string           `json:"name,omitempty"`
 	Version              *string           `json:"version,omitempty"`
@@ -314,6 +234,4 @@ type PackageNPMMetadata struct {
 	DeletedByID          *int64            `json:"deleted_by_id,omitempty"`
 }
 
-func (nm PackageNPMMetadata) String() string {
-	return Stringify(nm)
-}
+func (nm PackageNPMMetadata) String() string { _ = "STUB: not implemented"; return "" }

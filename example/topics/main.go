@@ -1,30 +1,15 @@
-// Copyright 2019 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The topics command demonstrates the functionality that
-// prompts the user for a GitHub topic and lists all the entities
-// that are related to the specified topic or subject.
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 
 	"github.com/google/go-github/v89/github"
 )
 
-// Fetch and lists all the public topics associated with the specified GitHub topic.
 func fetchTopics(topic string) (*github.TopicsSearchResult, error) {
-	client, err := github.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	topics, _, err := client.Search.Topics(context.Background(), topic, nil)
-	return topics, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func main() {

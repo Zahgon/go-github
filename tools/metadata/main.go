@@ -1,20 +1,8 @@
-// Copyright 2023 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// metadata is a command-line tool used to check and update this repo.
-// See CONTRIBUTING.md for details.
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
-	"slices"
 
 	"github.com/alecthomas/kong"
 	"github.com/google/go-github/v89/github"
@@ -57,26 +45,18 @@ type rootCmd struct {
 
 	WorkingDir string `kong:"short=C,default=.,help=${working_dir_help}"`
 
-	// for testing
 	GithubURL string `kong:"hidden,default='https://api.github.com'"`
 	UploadURL string `kong:"hidden,default='https://uploads.github.com'"`
 }
 
 func (c *rootCmd) opsFile() (string, *operationsFile, error) {
-	filename := filepath.Join(c.WorkingDir, "openapi_operations.yaml")
-	opsFile, err := loadOperationsFile(filename)
-	if err != nil {
-		return "", nil, err
-	}
-	return filename, opsFile, nil
+	_ = "STUB: not implemented"
+	return "", nil, nil
 }
 
 func githubClient(apiURL, uploadURL string) (*github.Client, error) {
-	token := os.Getenv("GITHUB_TOKEN")
-	if token == "" {
-		return nil, errors.New("GITHUB_TOKEN environment variable must be set to a GitHub personal access token with the public_repo scope")
-	}
-	return github.NewClient(github.WithAuthToken(token), github.WithEnterpriseURLs(apiURL, uploadURL))
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 type updateOpenAPICmd struct {
@@ -84,64 +64,15 @@ type updateOpenAPICmd struct {
 	ValidateGithub bool   `kong:"name=validate,help=${openapi_validate_help}"`
 }
 
-func (c *updateOpenAPICmd) Run(root *rootCmd) error {
-	ctx := context.Background()
-	if c.ValidateGithub && c.Ref != "main" {
-		return errors.New("--validate and --ref are mutually exclusive")
-	}
-	filename, opsFile, err := root.opsFile()
-	if err != nil {
-		return err
-	}
-	origOps := make([]*operation, len(opsFile.OpenapiOps))
-	copy(origOps, opsFile.OpenapiOps)
-	for i := range origOps {
-		origOps[i] = origOps[i].clone()
-	}
-	client, err := githubClient(root.GithubURL, root.UploadURL)
-	if err != nil {
-		return err
-	}
-	ref := c.Ref
-	if c.ValidateGithub {
-		ref = opsFile.GitCommit
-		if ref == "" {
-			return errors.New("openapi_operations.yaml does not have an openapi_commit field")
-		}
-	}
-	err = opsFile.updateFromGithub(ctx, client, ref)
-	if err != nil {
-		return err
-	}
-	if !c.ValidateGithub {
-		return opsFile.saveFile(filename)
-	}
-	if !operationsEqual(origOps, opsFile.OpenapiOps) {
-		return errors.New("openapi_operations.yaml does not match the OpenAPI descriptions in github.com/github/rest-api-description")
-	}
-	return nil
-}
+func (c *updateOpenAPICmd) Run(root *rootCmd) error { _ = "STUB: not implemented"; return nil }
 
 type formatCmd struct{}
 
-func (c *formatCmd) Run(root *rootCmd) error {
-	filename, opsFile, err := root.opsFile()
-	if err != nil {
-		return err
-	}
-	return opsFile.saveFile(filename)
-}
+func (c *formatCmd) Run(root *rootCmd) error { _ = "STUB: not implemented"; return nil }
 
 type updateGoCmd struct{}
 
-func (c *updateGoCmd) Run(root *rootCmd) error {
-	_, opsFile, err := root.opsFile()
-	if err != nil {
-		return err
-	}
-	err = updateDocs(opsFile, filepath.Join(root.WorkingDir, "github"))
-	return err
-}
+func (c *updateGoCmd) Run(root *rootCmd) error { _ = "STUB: not implemented"; return nil }
 
 type unusedCmd struct {
 	Deprecated bool `kong:"help=${unused_deprecated_help}"`
@@ -149,36 +80,7 @@ type unusedCmd struct {
 }
 
 func (c *unusedCmd) Run(root *rootCmd, k *kong.Context) error {
-	_, opsFile, err := root.opsFile()
-	if err != nil {
-		return err
-	}
-	unused, err := unusedOps(opsFile, filepath.Join(root.WorkingDir, "github"))
-	if err != nil {
-		return err
-	}
-	if c.Deprecated {
-		unused = slices.DeleteFunc(unused, func(op *operation) bool {
-			return !op.Deprecated
-		})
-	}
-	if c.JSON {
-		enc := json.NewEncoder(k.Stdout)
-		enc.SetIndent("", "  ")
-		return enc.Encode(unused)
-	}
-	fmt.Fprintf(k.Stdout, "Found %v unused operations\n", len(unused))
-	if len(unused) == 0 {
-		return nil
-	}
-	fmt.Fprintln(k.Stdout, "")
-	for _, op := range unused {
-		fmt.Fprintln(k.Stdout, op.Name)
-		if op.DocumentationURL != "" {
-			fmt.Fprintf(k.Stdout, "doc:     %v\n", op.DocumentationURL)
-		}
-		fmt.Fprintln(k.Stdout, "")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
@@ -190,15 +92,4 @@ func main() {
 	}
 }
 
-func run(args []string, opts []kong.Option) error {
-	var cmd rootCmd
-	parser, err := kong.New(&cmd, append(opts, helpVars)...)
-	if err != nil {
-		return err
-	}
-	k, err := parser.Parse(args)
-	if err != nil {
-		return err
-	}
-	return k.Run()
-}
+func run(args []string, opts []kong.Option) error { _ = "STUB: not implemented"; return nil }
