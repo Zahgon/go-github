@@ -19,3 +19,6 @@ vendor/
 # golangci-lint -v custom generates the following local file:
 custom-gcl
 custom-gcl.exe
+
+.aider*
+logs/
