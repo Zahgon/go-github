@@ -1,23 +1,13 @@
-// Copyright 2015 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"fmt"
 )
 
-// Scope models a GitHub authorization scope.
-//
-// GitHub API docs: https://docs.github.com/rest/oauth/#scopes
 type Scope string
 
-// This is the set of scopes for GitHub API V3.
 const (
-	ScopeNone           Scope = "(no scope)" // REVISIT: is this actually returned, or just a documentation artifact?
+	ScopeNone           Scope = "(no scope)"
 	ScopeUser           Scope = "user"
 	ScopeUserEmail      Scope = "user:email"
 	ScopeUserFollow     Scope = "user:follow"
@@ -44,16 +34,8 @@ const (
 	ScopeSecurityEvents Scope = "security_events"
 )
 
-// AuthorizationsService handles communication with the authorization related
-// methods of the GitHub API.
-//
-// This service requires HTTP Basic Authentication; it cannot be accessed using
-// an OAuth token.
-//
-// GitHub API docs: https://docs.github.com/rest/oauth-authorizations?apiVersion=2022-11-28
 type AuthorizationsService service
 
-// Authorization represents an individual GitHub authorization.
 type Authorization struct {
 	ID             *int64            `json:"id,omitempty"`
 	URL            *string           `json:"url,omitempty"`
@@ -68,26 +50,19 @@ type Authorization struct {
 	CreatedAt      *Timestamp        `json:"created_at,omitempty"`
 	Fingerprint    *string           `json:"fingerprint,omitempty"`
 
-	// User is only populated by the Check and Reset methods.
 	User *User `json:"user,omitempty"`
 }
 
-func (a Authorization) String() string {
-	return Stringify(a)
-}
+func (a Authorization) String() string { _ = "STUB: not implemented"; return "" }
 
-// AuthorizationApp represents an individual GitHub app (in the context of authorization).
 type AuthorizationApp struct {
 	URL      *string `json:"url,omitempty"`
 	Name     *string `json:"name,omitempty"`
 	ClientID *string `json:"client_id,omitempty"`
 }
 
-func (a AuthorizationApp) String() string {
-	return Stringify(a)
-}
+func (a AuthorizationApp) String() string { _ = "STUB: not implemented"; return "" }
 
-// Grant represents an OAuth application that has been granted access to an account.
 type Grant struct {
 	ID        *int64            `json:"id,omitempty"`
 	URL       *string           `json:"url,omitempty"`
@@ -97,11 +72,8 @@ type Grant struct {
 	Scopes    []string          `json:"scopes,omitempty"`
 }
 
-func (g Grant) String() string {
-	return Stringify(g)
-}
+func (g Grant) String() string { _ = "STUB: not implemented"; return "" }
 
-// AuthorizationRequest represents a request to create an authorization.
 type AuthorizationRequest struct {
 	Scopes       []Scope `json:"scopes,omitempty"`
 	Note         *string `json:"note,omitempty"`
@@ -111,17 +83,8 @@ type AuthorizationRequest struct {
 	Fingerprint  *string `json:"fingerprint,omitempty"`
 }
 
-func (a AuthorizationRequest) String() string {
-	return Stringify(a)
-}
+func (a AuthorizationRequest) String() string { _ = "STUB: not implemented"; return "" }
 
-// AuthorizationUpdateRequest represents a request to update an authorization.
-//
-// Note that for any one update, you must only provide one of the "scopes"
-// fields. That is, you may provide only one of "Scopes", or "AddScopes", or
-// "RemoveScopes".
-//
-// GitHub API docs: https://docs.github.com/rest/oauth-authorizations?apiVersion=2022-11-28#update-an-existing-authorization
 type AuthorizationUpdateRequest struct {
 	Scopes       []string `json:"scopes,omitempty"`
 	AddScopes    []string `json:"add_scopes,omitempty"`
@@ -131,163 +94,40 @@ type AuthorizationUpdateRequest struct {
 	Fingerprint  *string  `json:"fingerprint,omitempty"`
 }
 
-func (a AuthorizationUpdateRequest) String() string {
-	return Stringify(a)
-}
+func (a AuthorizationUpdateRequest) String() string { _ = "STUB: not implemented"; return "" }
 
-// Check if an OAuth token is valid for a specific app.
-//
-// Note that this operation requires the use of BasicAuth, but where the
-// username is the OAuth application clientID, and the password is its
-// clientSecret. Invalid tokens will return a 404 Not Found.
-//
-// The returned Authorization.User field will be populated.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/oauth-applications?apiVersion=2022-11-28#check-a-token
-//
 //meta:operation POST /applications/{client_id}/token
 func (s *AuthorizationsService) Check(ctx context.Context, clientID, accessToken string) (*Authorization, *Response, error) {
-	u := fmt.Sprintf("applications/%v/token", clientID)
-
-	reqBody := &struct {
-		AccessToken string `json:"access_token"`
-	}{AccessToken: accessToken}
-
-	req, err := s.client.NewRequest(ctx, "POST", u, reqBody)
-	if err != nil {
-		return nil, nil, err
-	}
-	req.Header.Set("Accept", mediaTypeOAuthAppPreview)
-
-	var a *Authorization
-	resp, err := s.client.Do(req, &a)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return a, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// Reset is used to reset a valid OAuth token without end user involvement.
-// Applications must save the "token" property in the response, because changes
-// take effect immediately.
-//
-// Note that this operation requires the use of BasicAuth, but where the
-// username is the OAuth application clientID, and the password is its
-// clientSecret. Invalid tokens will return a 404 Not Found.
-//
-// The returned Authorization.User field will be populated.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/oauth-applications?apiVersion=2022-11-28#reset-a-token
-//
 //meta:operation PATCH /applications/{client_id}/token
 func (s *AuthorizationsService) Reset(ctx context.Context, clientID, accessToken string) (*Authorization, *Response, error) {
-	u := fmt.Sprintf("applications/%v/token", clientID)
-
-	reqBody := &struct {
-		AccessToken string `json:"access_token"`
-	}{AccessToken: accessToken}
-
-	req, err := s.client.NewRequest(ctx, "PATCH", u, reqBody)
-	if err != nil {
-		return nil, nil, err
-	}
-	req.Header.Set("Accept", mediaTypeOAuthAppPreview)
-
-	var a *Authorization
-	resp, err := s.client.Do(req, &a)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return a, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// Revoke an authorization for an application.
-//
-// Note that this operation requires the use of BasicAuth, but where the
-// username is the OAuth application clientID, and the password is its
-// clientSecret. Invalid tokens will return a 404 Not Found.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/oauth-applications?apiVersion=2022-11-28#delete-an-app-token
-//
 //meta:operation DELETE /applications/{client_id}/token
 func (s *AuthorizationsService) Revoke(ctx context.Context, clientID, accessToken string) (*Response, error) {
-	u := fmt.Sprintf("applications/%v/token", clientID)
-
-	reqBody := &struct {
-		AccessToken string `json:"access_token"`
-	}{AccessToken: accessToken}
-
-	req, err := s.client.NewRequest(ctx, "DELETE", u, reqBody)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Accept", mediaTypeOAuthAppPreview)
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// DeleteGrant deletes an OAuth application grant. Deleting an application's
-// grant will also delete all OAuth tokens associated with the application for
-// the user.
-//
-// GitHub API docs: https://docs.github.com/rest/apps/oauth-applications?apiVersion=2022-11-28#delete-an-app-authorization
-//
 //meta:operation DELETE /applications/{client_id}/grant
 func (s *AuthorizationsService) DeleteGrant(ctx context.Context, clientID, accessToken string) (*Response, error) {
-	u := fmt.Sprintf("applications/%v/grant", clientID)
-
-	reqBody := &struct {
-		AccessToken string `json:"access_token"`
-	}{AccessToken: accessToken}
-
-	req, err := s.client.NewRequest(ctx, "DELETE", u, reqBody)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Accept", mediaTypeOAuthAppPreview)
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// CreateImpersonation creates an impersonation OAuth token.
-//
-// This requires admin permissions. With the returned Authorization.Token
-// you can e.g. create or delete a user's public SSH key. NOTE: creating a
-// new token automatically revokes an existing one.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/users#create-an-impersonation-oauth-token
-//
 //meta:operation POST /admin/users/{username}/authorizations
 func (s *AuthorizationsService) CreateImpersonation(ctx context.Context, username string, body *AuthorizationRequest) (*Authorization, *Response, error) {
-	u := fmt.Sprintf("admin/users/%v/authorizations", username)
-	req, err := s.client.NewRequest(ctx, "POST", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var a *Authorization
-	resp, err := s.client.Do(req, &a)
-	if err != nil {
-		return nil, resp, err
-	}
-	return a, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// DeleteImpersonation deletes an impersonation OAuth token.
-//
-// NOTE: there can be only one at a time.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/users#delete-an-impersonation-oauth-token
-//
 //meta:operation DELETE /admin/users/{username}/authorizations
 func (s *AuthorizationsService) DeleteImpersonation(ctx context.Context, username string) (*Response, error) {
-	u := fmt.Sprintf("admin/users/%v/authorizations", username)
-	req, err := s.client.NewRequest(ctx, "DELETE", u, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

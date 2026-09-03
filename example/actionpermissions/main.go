@@ -1,10 +1,3 @@
-// Copyright 2022 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The actionpermissions command utilizes go-github as a cli tool for
-// changing GitHub Actions related permission settings for a repository.
 package main
 
 import (

@@ -1,29 +1,19 @@
-// Copyright 2025 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"errors"
 )
 
-// ConfigApplyOptions is a struct to hold the options for the ConfigApply API and the response.
 type ConfigApplyOptions struct {
-	// RunID is the ID of the run to get the status of. If empty a random one will be generated.
 	RunID *string `json:"run_id,omitempty"`
 }
 
-// ConfigApplyStatus is a struct to hold the response from the ConfigApply API.
 type ConfigApplyStatus struct {
 	Running    *bool                    `json:"running,omitempty"`
 	Successful *bool                    `json:"successful,omitempty"`
 	Nodes      []*ConfigApplyStatusNode `json:"nodes"`
 }
 
-// ConfigApplyStatusNode is a struct to hold the response from the ConfigApply API.
 type ConfigApplyStatusNode struct {
 	Hostname   *string `json:"hostname,omitempty"`
 	Running    *bool   `json:"running,omitempty"`
@@ -31,24 +21,20 @@ type ConfigApplyStatusNode struct {
 	RunID      *string `json:"run_id,omitempty"`
 }
 
-// ConfigApplyEventsOptions is used to enable pagination.
 type ConfigApplyEventsOptions struct {
 	LastRequestID *string `url:"last_request_id,omitempty"`
 }
 
-// ConfigApplyEvents is a struct to hold the response from the ConfigApplyEvents API.
 type ConfigApplyEvents struct {
 	Nodes []*ConfigApplyEventsNode `json:"nodes"`
 }
 
-// ConfigApplyEventsNode is a struct to hold the response from the ConfigApplyEvents API.
 type ConfigApplyEventsNode struct {
 	Node          *string                       `json:"node,omitempty"`
 	LastRequestID *string                       `json:"last_request_id,omitempty"`
 	Events        []*ConfigApplyEventsNodeEvent `json:"events"`
 }
 
-// ConfigApplyEventsNodeEvent is a struct to hold the response from the ConfigApplyEvents API.
 type ConfigApplyEventsNodeEvent struct {
 	Timestamp    *Timestamp `json:"timestamp,omitempty"`
 	SeverityText *string    `json:"severity_text,omitempty"`
@@ -63,13 +49,11 @@ type ConfigApplyEventsNodeEvent struct {
 	SpanDepth    *int       `json:"span_depth,omitempty"`
 }
 
-// InitialConfigOptions represents the payload for initializing instance configuration.
 type InitialConfigOptions struct {
 	License  string `json:"license"`
 	Password string `json:"password"`
 }
 
-// LicenseStatus is a struct to hold the response from the License API.
 type LicenseStatus struct {
 	AdvancedSecurityEnabled      *bool      `json:"advancedSecurityEnabled,omitempty"`
 	AdvancedSecuritySeats        *int       `json:"advancedSecuritySeats,omitempty"`
@@ -87,24 +71,19 @@ type LicenseStatus struct {
 	ReferenceNumber              *string    `json:"referenceNumber,omitempty"`
 	Seats                        *int       `json:"seats,omitempty"`
 	SSHAllowed                   *bool      `json:"sshAllowed,omitempty"`
-	// SupportKey is documented as a string, but the actual response is a bool.
-	// TODO: Remove this note once GitHub corrects the schema documentation.
+
 	SupportKey       *bool `json:"supportKey,omitempty"`
 	UnlimitedSeating *bool `json:"unlimitedSeating,omitempty"`
 }
 
-// UploadLicenseOptions is a struct to hold the options for the UploadLicense API.
 type UploadLicenseOptions struct {
 	License string `url:"license"`
 }
 
-// LicenseCheck is a struct to hold the response from the LicenseStatus API.
 type LicenseCheck struct {
 	Status *string `json:"status,omitempty"`
 }
 
-// ConfigSettings is a struct to hold the response from the Settings API.
-// There are many fields that link to other structs.
 type ConfigSettings struct {
 	PrivateMode           *bool                          `json:"private_mode,omitempty"`
 	PublicPages           *bool                          `json:"public_pages,omitempty"`
@@ -138,13 +117,11 @@ type ConfigSettings struct {
 	LoadBalancer          *string                        `json:"load_balancer,omitempty"`
 }
 
-// ConfigSettingsAvatar is a struct to hold the response from the Settings API.
 type ConfigSettingsAvatar struct {
 	Enabled *bool   `json:"enabled,omitempty"`
 	URI     *string `json:"uri,omitempty"`
 }
 
-// ConfigSettingsCustomer is a struct to hold the response from the Settings API.
 type ConfigSettingsCustomer struct {
 	Name          *string `json:"name,omitempty"`
 	Email         *string `json:"email,omitempty"`
@@ -153,7 +130,6 @@ type ConfigSettingsCustomer struct {
 	PublicKeyData *string `json:"public_key_data,omitempty"`
 }
 
-// ConfigSettingsLicenseSettings is a struct to hold the response from the Settings API.
 type ConfigSettingsLicenseSettings struct {
 	Seats            *int       `json:"seats,omitempty"`
 	Evaluation       *bool      `json:"evaluation,omitempty"`
@@ -165,14 +141,12 @@ type ConfigSettingsLicenseSettings struct {
 	ExpireAt         *Timestamp `json:"expire_at,omitempty"`
 }
 
-// ConfigSettingsGithubSSL is a struct to hold the response from the Settings API.
 type ConfigSettingsGithubSSL struct {
 	Enabled *bool   `json:"enabled,omitempty"`
 	Cert    *string `json:"cert,omitempty"`
 	Key     *string `json:"key,omitempty"`
 }
 
-// ConfigSettingsLDAP is a struct to hold the response from the Settings API.
 type ConfigSettingsLDAP struct {
 	Host                    *string                           `json:"host,omitempty"`
 	Port                    *int                              `json:"port,omitempty"`
@@ -196,13 +170,11 @@ type ConfigSettingsLDAP struct {
 	Profile                 *ConfigSettingsLDAPProfile        `json:"profile,omitempty"`
 }
 
-// ConfigSettingsLDAPReconciliation is part of the ConfigSettingsLDAP struct.
 type ConfigSettingsLDAPReconciliation struct {
 	User *string `json:"user,omitempty"`
 	Org  *string `json:"org,omitempty"`
 }
 
-// ConfigSettingsLDAPProfile is part of the ConfigSettingsLDAP struct.
 type ConfigSettingsLDAPProfile struct {
 	UID  *string `json:"uid,omitempty"`
 	Name *string `json:"name,omitempty"`
@@ -210,12 +182,10 @@ type ConfigSettingsLDAPProfile struct {
 	Key  *string `json:"key,omitempty"`
 }
 
-// ConfigSettingsCAS is a struct to hold the response from the Settings API.
 type ConfigSettingsCAS struct {
 	URL *string `json:"url,omitempty"`
 }
 
-// ConfigSettingsSAML is a struct to hold the response from the Settings API.
 type ConfigSettingsSAML struct {
 	SSOURL             *string `json:"sso_url,omitempty"`
 	Certificate        *string `json:"certificate,omitempty"`
@@ -225,7 +195,6 @@ type ConfigSettingsSAML struct {
 	DisableAdminDemote *bool   `json:"disable_admin_demote,omitempty"`
 }
 
-// ConfigSettingsGithubOAuth is a struct to hold the response from the Settings API.
 type ConfigSettingsGithubOAuth struct {
 	ClientID         *string `json:"client_id,omitempty"`
 	ClientSecret     *string `json:"client_secret,omitempty"`
@@ -233,7 +202,6 @@ type ConfigSettingsGithubOAuth struct {
 	OrganizationTeam *string `json:"organization_team,omitempty"`
 }
 
-// ConfigSettingsSMTP is a struct to hold the response from the Settings API.
 type ConfigSettingsSMTP struct {
 	Enabled                 *bool   `json:"enabled,omitempty"`
 	Address                 *string `json:"address,omitempty"`
@@ -250,31 +218,26 @@ type ConfigSettingsSMTP struct {
 	NoreplyAddress          *string `json:"noreply_address,omitempty"`
 }
 
-// ConfigSettingsNTP is a struct to hold the response from the Settings API.
 type ConfigSettingsNTP struct {
 	PrimaryServer   *string `json:"primary_server,omitempty"`
 	SecondaryServer *string `json:"secondary_server,omitempty"`
 }
 
-// ConfigSettingsSNMP is a struct to hold the response from the Settings API.
 type ConfigSettingsSNMP struct {
 	Enabled   *bool   `json:"enabled,omitempty"`
 	Community *string `json:"community,omitempty"`
 }
 
-// ConfigSettingsSyslog is a struct to hold the response from the Settings API.
 type ConfigSettingsSyslog struct {
 	Enabled      *bool   `json:"enabled,omitempty"`
 	Server       *string `json:"server,omitempty"`
 	ProtocolName *string `json:"protocol_name,omitempty"`
 }
 
-// ConfigSettingsPagesSettings is a struct to hold the response from the Settings API.
 type ConfigSettingsPagesSettings struct {
 	Enabled *bool `json:"enabled,omitempty"`
 }
 
-// ConfigSettingsCollectd is a struct to hold the response from the Settings API.
 type ConfigSettingsCollectd struct {
 	Enabled    *bool   `json:"enabled,omitempty"`
 	Server     *string `json:"server,omitempty"`
@@ -284,7 +247,6 @@ type ConfigSettingsCollectd struct {
 	Password   *string `json:"password,omitempty"`
 }
 
-// ConfigSettingsMapping is a struct to hold the response from the Settings API.
 type ConfigSettingsMapping struct {
 	Enabled    *bool   `json:"enabled,omitempty"`
 	Tileserver *string `json:"tileserver,omitempty"`
@@ -292,231 +254,73 @@ type ConfigSettingsMapping struct {
 	Token      *string `json:"token,omitempty"`
 }
 
-// NodeMetadataStatus is a struct to hold the response from the NodeMetadata API.
 type NodeMetadataStatus struct {
 	Topology *string        `json:"topology,omitempty"`
 	Nodes    []*NodeDetails `json:"nodes"`
 }
 
-// NodeDetails is a struct to hold the response from the NodeMetadata API.
 type NodeDetails struct {
 	Hostname     *string  `json:"hostname,omitempty"`
 	UUID         *string  `json:"uuid,omitempty"`
 	ClusterRoles []string `json:"cluster_roles,omitempty"`
 }
 
-// ConfigApplyEvents gets events from the command ghe-config-apply.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#list-events-from-ghe-config-apply
-//
 //meta:operation GET /manage/v1/config/apply/events
 func (s *EnterpriseService) ConfigApplyEvents(ctx context.Context, opts *ConfigApplyEventsOptions) (*ConfigApplyEvents, *Response, error) {
-	u, err := addOptions("manage/v1/config/apply/events", opts)
-	if err != nil {
-		return nil, nil, err
-	}
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var configApplyEvents *ConfigApplyEvents
-	resp, err := s.client.Do(req, &configApplyEvents)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return configApplyEvents, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// InitialConfig initializes the GitHub Enterprise instance with a license and password.
-// After initializing the instance, you need to run an apply to apply the configuration.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#initialize-instance-configuration-with-license-and-password
-//
 //meta:operation POST /manage/v1/config/init
 func (s *EnterpriseService) InitialConfig(ctx context.Context, license, password string) (*Response, error) {
-	u := "manage/v1/config/init"
-
-	payload := &InitialConfigOptions{
-		License:  license,
-		Password: password,
-	}
-
-	req, err := s.client.NewRequest(ctx, "POST", u, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// License gets the current license information for the GitHub Enterprise instance.
-//
-// NOTE: The GitHub documentation incorrectly shows the return type as a list ([{...}]),
-// but the actual response is a single object ({...}).
-// TODO: Remove this note once GitHub corrects the schema documentation.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#get-the-enterprise-license-information
-//
 //meta:operation GET /manage/v1/config/license
 func (s *EnterpriseService) License(ctx context.Context) (*LicenseStatus, *Response, error) {
-	u := "manage/v1/config/license"
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var licenseStatus *LicenseStatus
-	resp, err := s.client.Do(req, &licenseStatus)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return licenseStatus, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// UploadLicense uploads a new license to the GitHub Enterprise instance.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#upload-an-enterprise-license
-//
 //meta:operation PUT /manage/v1/config/license
 func (s *EnterpriseService) UploadLicense(ctx context.Context, license string) (*Response, error) {
-	u := "manage/v1/config/license"
-	opts := &UploadLicenseOptions{
-		License: license,
-	}
-	req, err := s.client.NewRequest(ctx, "PUT", u, opts)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// LicenseStatus gets the current license status for the GitHub Enterprise instance.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#check-a-license
-//
 //meta:operation GET /manage/v1/config/license/check
 func (s *EnterpriseService) LicenseStatus(ctx context.Context) ([]*LicenseCheck, *Response, error) {
-	u := "manage/v1/config/license/check"
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var checks []*LicenseCheck
-	resp, err := s.client.Do(req, &checks)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return checks, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// NodeMetadata gets the metadata for all nodes in the GitHub Enterprise instance.
-// This is required for clustered setups.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#get-ghes-node-metadata-for-all-nodes
-//
 //meta:operation GET /manage/v1/config/nodes
 func (s *EnterpriseService) NodeMetadata(ctx context.Context, opts *NodeQueryOptions) (*NodeMetadataStatus, *Response, error) {
-	u, err := addOptions("manage/v1/config/nodes", opts)
-	if err != nil {
-		return nil, nil, err
-	}
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var status *NodeMetadataStatus
-	resp, err := s.client.Do(req, &status)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return status, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// Settings gets the current configuration settings for the GitHub Enterprise instance.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#get-the-ghes-settings
-//
 //meta:operation GET /manage/v1/config/settings
 func (s *EnterpriseService) Settings(ctx context.Context) (*ConfigSettings, *Response, error) {
-	u := "manage/v1/config/settings"
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var configSettings *ConfigSettings
-	resp, err := s.client.Do(req, &configSettings)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return configSettings, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// UpdateSettings updates the configuration settings for the GitHub Enterprise instance.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#set-settings
-//
 //meta:operation PUT /manage/v1/config/settings
 func (s *EnterpriseService) UpdateSettings(ctx context.Context, body *ConfigSettings) (*Response, error) {
-	u := "manage/v1/config/settings"
-
-	if body == nil {
-		return nil, errors.New("opts should not be nil")
-	}
-	req, err := s.client.NewRequest(ctx, "PUT", u, body)
-	if err != nil {
-		return nil, err
-	}
-
-	return s.client.Do(req, nil)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-// ConfigApply triggers a configuration apply run on the GitHub Enterprise instance.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#trigger-a-ghe-config-apply-run
-//
 //meta:operation POST /manage/v1/config/apply
 func (s *EnterpriseService) ConfigApply(ctx context.Context, body *ConfigApplyOptions) (*ConfigApplyOptions, *Response, error) {
-	u := "manage/v1/config/apply"
-	req, err := s.client.NewRequest(ctx, "POST", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var configApplyOptions *ConfigApplyOptions
-	resp, err := s.client.Do(req, &configApplyOptions)
-	if err != nil {
-		return nil, resp, err
-	}
-	return configApplyOptions, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// ConfigApplyStatus gets the status of a ghe-config-apply run on the GitHub Enterprise instance.
-// You can request lat one or specific id one.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/manage-ghes#get-the-status-of-a-ghe-config-apply-run
-//
 //meta:operation GET /manage/v1/config/apply
 func (s *EnterpriseService) ConfigApplyStatus(ctx context.Context, opts *ConfigApplyOptions) (*ConfigApplyStatus, *Response, error) {
-	u := "manage/v1/config/apply"
-	req, err := s.client.NewRequest(ctx, "GET", u, opts)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var status *ConfigApplyStatus
-	resp, err := s.client.Do(req, &status)
-	if err != nil {
-		return nil, resp, err
-	}
-	return status, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

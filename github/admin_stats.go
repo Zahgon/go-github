@@ -1,16 +1,9 @@
-// Copyright 2017 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
 )
 
-// AdminStats represents a variety of stats of a GitHub Enterprise
-// installation.
 type AdminStats struct {
 	Issues     *IssueStats     `json:"issues,omitempty"`
 	Hooks      *HookStats      `json:"hooks,omitempty"`
@@ -24,45 +17,32 @@ type AdminStats struct {
 	Repos      *RepoStats      `json:"repos,omitempty"`
 }
 
-func (s AdminStats) String() string {
-	return Stringify(s)
-}
+func (s AdminStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// IssueStats represents the number of total, open and closed issues.
 type IssueStats struct {
 	TotalIssues  *int `json:"total_issues,omitempty"`
 	OpenIssues   *int `json:"open_issues,omitempty"`
 	ClosedIssues *int `json:"closed_issues,omitempty"`
 }
 
-func (s IssueStats) String() string {
-	return Stringify(s)
-}
+func (s IssueStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// HookStats represents the number of total, active and inactive hooks.
 type HookStats struct {
 	TotalHooks    *int `json:"total_hooks,omitempty"`
 	ActiveHooks   *int `json:"active_hooks,omitempty"`
 	InactiveHooks *int `json:"inactive_hooks,omitempty"`
 }
 
-func (s HookStats) String() string {
-	return Stringify(s)
-}
+func (s HookStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// MilestoneStats represents the number of total, open and close milestones.
 type MilestoneStats struct {
 	TotalMilestones  *int `json:"total_milestones,omitempty"`
 	OpenMilestones   *int `json:"open_milestones,omitempty"`
 	ClosedMilestones *int `json:"closed_milestones,omitempty"`
 }
 
-func (s MilestoneStats) String() string {
-	return Stringify(s)
-}
+func (s MilestoneStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// OrgStats represents the number of total, disabled organizations and the team
-// and team member count.
 type OrgStats struct {
 	TotalOrgs        *int `json:"total_orgs,omitempty"`
 	DisabledOrgs     *int `json:"disabled_orgs,omitempty"`
@@ -70,12 +50,8 @@ type OrgStats struct {
 	TotalTeamMembers *int `json:"total_team_members,omitempty"`
 }
 
-func (s OrgStats) String() string {
-	return Stringify(s)
-}
+func (s OrgStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// CommentStats represents the number of total comments on commits, gists, issues
-// and pull requests.
 type CommentStats struct {
 	TotalCommitComments      *int `json:"total_commit_comments,omitempty"`
 	TotalGistComments        *int `json:"total_gist_comments,omitempty"`
@@ -83,43 +59,30 @@ type CommentStats struct {
 	TotalPullRequestComments *int `json:"total_pull_request_comments,omitempty"`
 }
 
-func (s CommentStats) String() string {
-	return Stringify(s)
-}
+func (s CommentStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// PageStats represents the total number of github pages.
 type PageStats struct {
 	TotalPages *int `json:"total_pages,omitempty"`
 }
 
-func (s PageStats) String() string {
-	return Stringify(s)
-}
+func (s PageStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// UserStats represents the number of total, admin and suspended users.
 type UserStats struct {
 	TotalUsers     *int `json:"total_users,omitempty"`
 	AdminUsers     *int `json:"admin_users,omitempty"`
 	SuspendedUsers *int `json:"suspended_users,omitempty"`
 }
 
-func (s UserStats) String() string {
-	return Stringify(s)
-}
+func (s UserStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// GistStats represents the number of total, private and public gists.
 type GistStats struct {
 	TotalGists   *int `json:"total_gists,omitempty"`
 	PrivateGists *int `json:"private_gists,omitempty"`
 	PublicGists  *int `json:"public_gists,omitempty"`
 }
 
-func (s GistStats) String() string {
-	return Stringify(s)
-}
+func (s GistStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// PullStats represents the number of total, merged, mergeable and unmergeable
-// pull-requests.
 type PullStats struct {
 	TotalPulls       *int `json:"total_pulls,omitempty"`
 	MergedPulls      *int `json:"merged_pulls,omitempty"`
@@ -127,12 +90,8 @@ type PullStats struct {
 	UnmergeablePulls *int `json:"unmergeable_pulls,omitempty"`
 }
 
-func (s PullStats) String() string {
-	return Stringify(s)
-}
+func (s PullStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// RepoStats represents the number of total, root, fork, organization repositories
-// together with the total number of pushes and wikis.
 type RepoStats struct {
 	TotalRepos  *int `json:"total_repos,omitempty"`
 	RootRepos   *int `json:"root_repos,omitempty"`
@@ -142,31 +101,10 @@ type RepoStats struct {
 	TotalWikis  *int `json:"total_wikis,omitempty"`
 }
 
-func (s RepoStats) String() string {
-	return Stringify(s)
-}
+func (s RepoStats) String() string { _ = "STUB: not implemented"; return "" }
 
-// GetAdminStats returns a variety of metrics about a GitHub Enterprise
-// installation.
-//
-// Please note that this is only available to site administrators,
-// otherwise it will error with a 404 not found (instead of 401 or 403).
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/admin-stats#get-all-statistics
-//
 //meta:operation GET /enterprise/stats/all
 func (s *AdminService) GetAdminStats(ctx context.Context) (*AdminStats, *Response, error) {
-	u := "enterprise/stats/all"
-	req, err := s.client.NewRequest(ctx, "GET", u, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var m *AdminStats
-	resp, err := s.client.Do(req, &m)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return m, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

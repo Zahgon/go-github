@@ -1,11 +1,3 @@
-// Copyright 2021 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// newfilewithappauth demonstrates the functionality of GitHub's app authentication
-// methods by fetching an installation access token as a GitHub App and then
-// using that token to authenticate with the GitHub API.
 package main
 
 import (
@@ -33,7 +25,6 @@ func main() {
 	}
 	itr.BaseURL = gitHost
 
-	// create git client with app transport
 	client, err := github.NewClient(github.WithHTTPClient(&http.Client{
 		Transport: itr,
 		Timeout:   time.Second * 30,
@@ -47,8 +38,6 @@ func main() {
 		log.Fatalf("failed to list installations: %v", err)
 	}
 
-	// capture our installationId for our app
-	// we need this for the access token
 	var installID int64
 	for _, val := range installations {
 		installID = val.GetID()

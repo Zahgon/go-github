@@ -1,10 +1,3 @@
-// Copyright 2026 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// This example demonstrates how to use the otel transport to instrument
-// the go-github client with OpenTelemetry tracing.
 package main
 
 import (
@@ -20,7 +13,7 @@ import (
 )
 
 func main() {
-	// Initialize stdout exporter to see traces in console
+
 	exporter, err := stdouttrace.New(stdouttrace.WithPrettyPrint())
 	if err != nil {
 		log.Fatalf("failed to initialize stdouttrace exporter: %v", err)
@@ -35,7 +28,6 @@ func main() {
 		}
 	}()
 
-	// Configure OTel transport
 	t := otel.NewTransport(
 		http.DefaultTransport,
 		otel.WithTracerProvider(tp),
@@ -46,7 +38,6 @@ func main() {
 		log.Fatalf("Error creating GitHub client: %v", err)
 	}
 
-	// Make a request (Get Rate Limits is public and cheap)
 	limits, resp, err := client.RateLimit.Get(context.Background())
 	if err != nil {
 		log.Printf("Error fetching rate limits: %v", err)
@@ -57,7 +48,6 @@ func main() {
 			limits.GetCore().Reset)
 	}
 
-	// Print the HTTP response status when available.
 	if resp != nil {
 		fmt.Printf("Response Status: %v\n", resp.Status)
 	}

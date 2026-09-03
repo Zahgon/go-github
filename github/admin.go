@@ -1,23 +1,11 @@
-// Copyright 2016 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package github
 
 import (
 	"context"
-	"fmt"
 )
 
-// AdminService handles communication with the admin related methods of the
-// GitHub API. These API routes are normally only accessible for GitHub
-// Enterprise installations.
-//
-// GitHub API docs: https://docs.github.com/rest/enterprise-admin?apiVersion=2022-11-28
 type AdminService service
 
-// TeamLDAPMapping represents the mapping between a GitHub team and an LDAP group.
 type TeamLDAPMapping struct {
 	ID          *int64  `json:"id,omitempty"`
 	LDAPDN      *string `json:"ldap_dn,omitempty"`
@@ -32,17 +20,12 @@ type TeamLDAPMapping struct {
 	RepositoriesURL *string `json:"repositories_url,omitempty"`
 }
 
-func (m TeamLDAPMapping) String() string {
-	return Stringify(m)
-}
+func (m TeamLDAPMapping) String() string { _ = "STUB: not implemented"; return "" }
 
-// UpdateTeamLDAPMappingRequest represents a request to update the mapping
-// between a GitHub team and an LDAP group.
 type UpdateTeamLDAPMappingRequest struct {
 	LDAPDN string `json:"ldap_dn"`
 }
 
-// UserLDAPMapping represents the mapping between a GitHub user and an LDAP user.
 type UserLDAPMapping struct {
 	ID         *int64  `json:"id,omitempty"`
 	LDAPDN     *string `json:"ldap_dn,omitempty"`
@@ -64,17 +47,12 @@ type UserLDAPMapping struct {
 	SubscriptionsURL  *string `json:"subscriptions_url,omitempty"`
 }
 
-func (m UserLDAPMapping) String() string {
-	return Stringify(m)
-}
+func (m UserLDAPMapping) String() string { _ = "STUB: not implemented"; return "" }
 
-// UpdateUserLDAPMappingRequest represents a request to update the mapping
-// between a GitHub user and an LDAP user.
 type UpdateUserLDAPMappingRequest struct {
 	LDAPDN string `json:"ldap_dn"`
 }
 
-// Enterprise represents the GitHub enterprise profile.
 type Enterprise struct {
 	ID          *int       `json:"id,omitempty"`
 	Slug        *string    `json:"slug,omitempty"`
@@ -88,48 +66,16 @@ type Enterprise struct {
 	UpdatedAt   *Timestamp `json:"updated_at,omitempty"`
 }
 
-func (m Enterprise) String() string {
-	return Stringify(m)
-}
+func (m Enterprise) String() string { _ = "STUB: not implemented"; return "" }
 
-// UpdateUserLDAPMapping updates the mapping between a GitHub user and an LDAP user.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/ldap#update-ldap-mapping-for-a-user
-//
 //meta:operation PATCH /admin/ldap/users/{username}/mapping
 func (s *AdminService) UpdateUserLDAPMapping(ctx context.Context, user string, body UpdateUserLDAPMappingRequest) (*UserLDAPMapping, *Response, error) {
-	u := fmt.Sprintf("admin/ldap/users/%v/mapping", user)
-	req, err := s.client.NewRequest(ctx, "PATCH", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var m *UserLDAPMapping
-	resp, err := s.client.Do(req, &m)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return m, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
-// UpdateTeamLDAPMapping updates the mapping between a GitHub team and an LDAP group.
-//
-// GitHub API docs: https://docs.github.com/enterprise-server@3.21/rest/enterprise-admin/ldap#update-ldap-mapping-for-a-team
-//
 //meta:operation PATCH /admin/ldap/teams/{team_id}/mapping
 func (s *AdminService) UpdateTeamLDAPMapping(ctx context.Context, teamID int64, body UpdateTeamLDAPMappingRequest) (*TeamLDAPMapping, *Response, error) {
-	u := fmt.Sprintf("admin/ldap/teams/%v/mapping", teamID)
-	req, err := s.client.NewRequest(ctx, "PATCH", u, body)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var m *TeamLDAPMapping
-	resp, err := s.client.Do(req, &m)
-	if err != nil {
-		return nil, resp, err
-	}
-
-	return m, resp, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }

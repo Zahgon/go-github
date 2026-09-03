@@ -1,10 +1,3 @@
-// Copyright 2025 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
-// The uploadreleaseassetfromrelease example demonstrates how to upload
-// a release asset using the UploadReleaseAssetFromRelease helper.
 package main
 
 import (
@@ -33,13 +26,11 @@ func main() {
 	repo := "REPO"
 	releaseID := int64(1)
 
-	// Fetch the release (UploadURL is populated by the API)
 	release, _, err := client.Repositories.GetRelease(ctx, owner, repo, releaseID)
 	if err != nil {
 		log.Fatalf("GetRelease failed: %v", err)
 	}
 
-	// Asset content
 	data := []byte("Hello from go-github!\n")
 	reader := bytes.NewReader(data)
 	size := int64(len(data))

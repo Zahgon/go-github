@@ -1,32 +1,14 @@
-// Copyright 2026 The go-github AUTHORS. All rights reserved.
-//
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 //go:build ignore
 
-// gen-iterators generates iterator methods for List methods.
-//
-// It is meant to be used by go-github contributors in conjunction with the
-// go generate tool before sending a PR to GitHub.
-// Please see the CONTRIBUTING.md file for more information.
 package main
 
 import (
-	"bytes"
-	"errors"
 	"flag"
-	"fmt"
 	"go/ast"
-	"go/format"
 	"go/parser"
 	"go/token"
-	"io/fs"
 	"log"
 	"os"
-	"reflect"
-	"slices"
-	"strconv"
 	"strings"
 	"text/template"
 )
@@ -46,21 +28,14 @@ var (
 	testTmpl = template.Must(template.New("test").Parse(test))
 )
 
-func isCheck() bool {
-	return *check || os.Getenv("CHECK") == "1"
-}
+func isCheck() bool { _ = "STUB: not implemented"; return false }
 
-func logf(fmt string, args ...any) {
-	if *verbose {
-		log.Printf(fmt, args...)
-	}
-}
+func logf(fmt string, args ...any) { _ = "STUB: not implemented"; return }
 
 func main() {
 	flag.Parse()
 	fset := token.NewFileSet()
 
-	// Parse the current directory
 	pkgs, err := parser.ParseDir(fset, ".", sourceFilter, 0)
 	if err != nil {
 		log.Fatal(err)
@@ -92,9 +67,7 @@ func main() {
 	logf("Done.")
 }
 
-func sourceFilter(fi os.FileInfo) bool {
-	return !strings.HasSuffix(fi.Name(), "_test.go") && !strings.HasSuffix(fi.Name(), fileSuffix) && !strings.HasPrefix(fi.Name(), "gen-")
-}
+func sourceFilter(fi os.FileInfo) bool { _ = "STUB: not implemented"; return false }
 
 type templateData struct {
 	filename string
@@ -154,511 +127,93 @@ type methodInfo struct {
 	UseCursor            bool
 }
 
-// useCursorPagination identifies method names that require `Cursor` pagination
-// instead of using `After`.
 var useCursorPagination = map[string]bool{
 	"AppsService.ListHookDeliveries":          true,
 	"OrganizationsService.ListHookDeliveries": true,
 	"RepositoriesService.ListHookDeliveries":  true,
 }
 
-// customNames provides custom names for iterator methods where the default methodName + "Iter" would be confusing.
 var customNames = map[string]string{
 	"RepositoriesService.GetCommit":         "ListCommitFiles",
 	"RepositoriesService.CompareCommits":    "ListCommitComparisonFiles",
 	"RepositoriesService.GetCombinedStatus": "ListCombinedStatus",
 }
 
-// sliceToBeUsedForIteration identifies methods where the wrapper struct contains multiple []*T fields,
-// and specifies which field should be used for iteration.
 var sliceToBeUsedForIteration = map[string]string{
 	"RepositoriesService.GetCommit":      "Files",
 	"RepositoriesService.CompareCommits": "Files",
 }
 
-// customTestJSON maps method names to the JSON response they expect in tests.
-// This is needed for methods that internally unmarshal a wrapper struct
-// even though they return a slice.
 var customTestJSON = map[string]string{
 	"ListAllTopics":         `{"names": []}`,
 	"ListUserInstallations": `{"installations": []}`,
 }
 
-func (t *templateData) processStructs(f *ast.File) {
-	for _, decl := range f.Decls {
-		gd, ok := decl.(*ast.GenDecl)
-		if !ok || gd.Tok != token.TYPE {
-			continue
-		}
-		for _, spec := range gd.Specs {
-			ts, ok := spec.(*ast.TypeSpec)
-			if !ok {
-				continue
-			}
-			st, ok := ts.Type.(*ast.StructType)
-			if !ok {
-				continue
-			}
-
-			sd := &structDef{
-				Name:      ts.Name.Name,
-				Fields:    make(map[string]string),
-				FieldJSON: make(map[string]string),
-			}
-
-			fieldJSON := ""
-			for _, field := range st.Fields.List {
-				typeStr := typeToString(field.Type)
-				fieldJSON = ""
-				if field.Tag != nil {
-					if unquotedTag, err := strconv.Unquote(field.Tag.Value); err == nil {
-						fieldJSON = reflect.StructTag(unquotedTag).Get("json")
-						if idx := strings.Index(fieldJSON, ","); idx >= 0 {
-							fieldJSON = fieldJSON[:idx]
-						}
-						if fieldJSON == "-" {
-							fieldJSON = ""
-						}
-					}
-				}
-				if len(field.Names) == 0 {
-					sd.Embeds = append(sd.Embeds, strings.TrimPrefix(typeStr, "*"))
-				} else {
-					for _, name := range field.Names {
-						sd.Fields[name.Name] = typeStr
-						if fieldJSON != "" {
-							sd.FieldJSON[name.Name] = fieldJSON
-						}
-					}
-				}
-			}
-			t.Structs[sd.Name] = sd
-		}
-	}
-}
+func (t *templateData) processStructs(f *ast.File) { _ = "STUB: not implemented"; return }
 
 func (t *templateData) hasListCursorOptions(structName string) bool {
-	return t.hasOptions(structName, "ListCursorOptions")
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (t *templateData) hasListOptions(structName string) bool {
-	return t.hasOptions(structName, "ListOptions")
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (t *templateData) hasOptions(structName, optionsType string) bool {
-	sd, ok := t.Structs[structName]
-	if !ok {
-		return false
-	}
-	for _, embed := range sd.Embeds {
-		if embed == optionsType {
-			return true
-		}
-		if t.hasOptions(embed, optionsType) {
-			return true
-		}
-	}
+	_ = "STUB: not implemented"
 	return false
 }
 
-func (t *templateData) hasIntPage(structName string) bool {
-	sd, ok := t.Structs[structName]
-	if !ok {
-		return false
-	}
-	if typeStr, ok := sd.Fields["Page"]; ok {
-		return typeStr == "int"
-	}
-	for _, embed := range sd.Embeds {
-		if t.hasIntPage(embed) {
-			return true
-		}
-	}
-	return false
-}
+func (t *templateData) hasIntPage(structName string) bool { _ = "STUB: not implemented"; return false }
 
 func (t *templateData) hasStringAfter(structName string) bool {
-	sd, ok := t.Structs[structName]
-	if !ok {
-		return false
-	}
-	if typeStr, ok := sd.Fields["After"]; ok {
-		return typeStr == "string"
-	}
-	for _, embed := range sd.Embeds {
-		if t.hasStringAfter(embed) {
-			return true
-		}
-	}
+	_ = "STUB: not implemented"
 	return false
 }
 
-func getZeroValue(typeStr string) string {
-	switch typeStr {
-	case "int", "int64", "int32":
-		return "0"
-	case "string":
-		return `""`
-	case "bool":
-		return "false"
-	case "context.Context":
-		return "t.Context()"
-	default:
-		return "nil"
-	}
-}
+func getZeroValue(typeStr string) string { _ = "STUB: not implemented"; return "" }
 
-func (t *templateData) processMethods(f *ast.File) error {
-	for _, decl := range f.Decls {
-		fd, ok := decl.(*ast.FuncDecl)
-		if !ok || fd.Recv == nil {
-			continue
-		}
-
-		methodKey := strings.TrimPrefix(typeToString(fd.Recv.List[0].Type), "*") + "." + fd.Name.Name
-		if !fd.Name.IsExported() || (!strings.HasPrefix(fd.Name.Name, "List") && customNames[methodKey] == "") {
-			continue
-		}
-
-		if strings.Contains(fd.Name.Name, "MatchingRefs") {
-			continue
-		}
-
-		if fd.Type.Results == nil || len(fd.Type.Results.List) != 3 {
-			continue
-		}
-
-		methodInfo, ok := t.isMethodIterable(fd)
-		if !ok {
-			continue
-		}
-
-		switch retType := fd.Type.Results.List[0].Type.(type) {
-		case *ast.ArrayType:
-			t.processReturnArrayType(fd, retType, methodInfo)
-		case *ast.StarExpr:
-			t.processReturnStarExpr(fd, retType, methodInfo)
-		default:
-			log.Fatalf("unhandled return type: %T", retType)
-		}
-	}
-	return nil
-}
+func (t *templateData) processMethods(f *ast.File) error { _ = "STUB: not implemented"; return nil }
 
 func (t *templateData) isMethodIterable(fd *ast.FuncDecl) (*methodInfo, bool) {
-	if !validateMethodShape(fd) {
-		return nil, false
-	}
-
-	methodInfo, ok := t.collectMethodInfo(fd)
-	if !ok {
-		return nil, false
-	}
-
-	return methodInfo, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
 
-func validateMethodShape(fd *ast.FuncDecl) bool {
-	if typeToString(fd.Type.Results.List[1].Type) != "*Response" {
-		return false
-	}
-	if typeToString(fd.Type.Results.List[2].Type) != "error" {
-		return false
-	}
-
-	recvType := typeToString(fd.Recv.List[0].Type)
-	if !strings.HasPrefix(recvType, "*") || !strings.HasSuffix(recvType, "Service") {
-		return false
-	}
-
-	return true
-}
+func validateMethodShape(fd *ast.FuncDecl) bool { _ = "STUB: not implemented"; return false }
 
 func (t *templateData) collectMethodInfo(fd *ast.FuncDecl) (*methodInfo, bool) {
-	recvType := typeToString(fd.Recv.List[0].Type)
-	recvVar := ""
-	if len(fd.Recv.List[0].Names) > 0 {
-		recvVar = fd.Recv.List[0].Names[0].Name
-	}
-
-	args := []string{}
-	callArgs := []string{}
-	testCallArgs := []string{}
-	zeroArgs := []string{}
-	var optsType string
-	var optsName string
-	hasOpts := false
-	optsIsPtr := false
-
-	for _, field := range fd.Type.Params.List {
-		typeStr := typeToString(field.Type)
-		zeroArg := getZeroValue(typeStr)
-		for _, name := range field.Names {
-			args = append(args, fmt.Sprintf("%v %v", name.Name, typeStr))
-			callArgs = append(callArgs, name.Name)
-			zeroArgs = append(zeroArgs, zeroArg)
-
-			if strings.HasSuffix(typeStr, "Options") {
-				optsType = strings.TrimPrefix(typeStr, "*")
-				optsName = name.Name
-				hasOpts = true
-				optsIsPtr = strings.HasPrefix(typeStr, "*")
-			}
-		}
-		// second pass: generate testCallArgs after optsName is identified
-		for _, name := range field.Names {
-			if name.Name == optsName {
-				testCallArgs = append(testCallArgs, name.Name)
-			} else {
-				testCallArgs = append(testCallArgs, zeroArg)
-			}
-		}
-	}
-
-	if !hasOpts {
-		return nil, false
-	}
-
-	useListCursorOptions := t.hasListCursorOptions(optsType)
-	useListOptions := t.hasListOptions(optsType)
-	usePage := t.hasIntPage(optsType)
-	useAfter := t.hasStringAfter(optsType)
-	recType := strings.TrimPrefix(recvType, "*")
-	var useCursor bool
-	if useCursorPagination[recType+"."+fd.Name.Name] {
-		useCursor = true
-		useAfter = false
-	}
-
-	if !useListCursorOptions && !useListOptions && !usePage && !useAfter && !useCursor {
-		logf("Skipping %v.%v: opts %v does not have ListCursorOptions, ListOptions, Page int, or After string", recvType, fd.Name.Name, optsType)
-		return nil, false
-	}
-
-	clientField := strings.TrimSuffix(recType, "Service")
-	if clientField == "Migration" {
-		clientField = "Migrations"
-	}
-	if clientField == "s" {
-		logf("WARNING: clientField is 's' for %v.%v (recvType=%v)", recvType, fd.Name.Name, recType)
-	}
-
-	return &methodInfo{
-		RecvTypeRaw:          recvType,
-		RecvType:             recType,
-		RecvVar:              recvVar,
-		ClientField:          clientField,
-		Args:                 strings.Join(args, ", "),
-		CallArgs:             strings.Join(callArgs, ", "),
-		TestCallArgs:         strings.Join(testCallArgs, ", "),
-		ZeroArgs:             strings.Join(zeroArgs, ", "),
-		OptsType:             optsType,
-		OptsName:             optsName,
-		OptsIsPtr:            optsIsPtr,
-		UseListCursorOptions: useListCursorOptions,
-		UseListOptions:       useListOptions,
-		UsePage:              usePage,
-		UseAfter:             useAfter,
-		UseCursor:            useCursor,
-	}, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
 
 func getIterName(methodInfo *methodInfo, methodName string) string {
-	if customName, ok := customNames[methodInfo.RecvType+"."+methodName]; ok {
-		return customName + "Iter"
-	}
-	return methodName + "Iter"
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (t *templateData) processReturnArrayType(fd *ast.FuncDecl, sliceRet *ast.ArrayType, methodInfo *methodInfo) {
-	testJSON, emptyReturnValue := "[]", "{}"
-	if val, ok := customTestJSON[fd.Name.Name]; ok {
-		testJSON = val
-	}
-
-	eltType := typeToString(sliceRet.Elt)
-	if eltType == "string" {
-		emptyReturnValue = `""`
-	}
-	testJSON1 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v,%[1]v]", emptyReturnValue))       // Call 1 - return 3 items
-	testJSON2 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v,%[1]v,%[1]v]", emptyReturnValue)) // Call 1 part 2 - return 4 items
-	testJSON3 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v]", emptyReturnValue))             // Call 2 - return 2 items
-
-	m := &method{
-		RecvType:             methodInfo.RecvType,
-		RecvVar:              methodInfo.RecvVar,
-		ClientField:          methodInfo.ClientField,
-		MethodName:           fd.Name.Name,
-		IterMethod:           getIterName(methodInfo, fd.Name.Name),
-		Args:                 methodInfo.Args,
-		CallArgs:             methodInfo.CallArgs,
-		TestCallArgs:         methodInfo.TestCallArgs,
-		ZeroArgs:             methodInfo.ZeroArgs,
-		ReturnType:           eltType,
-		OptsType:             methodInfo.OptsType,
-		OptsName:             methodInfo.OptsName,
-		OptsIsPtr:            methodInfo.OptsIsPtr,
-		UseListCursorOptions: methodInfo.UseListCursorOptions,
-		UseListOptions:       methodInfo.UseListOptions,
-		UsePage:              methodInfo.UsePage,
-		UseAfter:             methodInfo.UseAfter,
-		UseCursor:            methodInfo.UseCursor,
-		TestJSON1:            testJSON1,
-		TestJSON2:            testJSON2,
-		TestJSON3:            testJSON3,
-	}
-	t.Methods = append(t.Methods, m)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (t *templateData) processReturnStarExpr(fd *ast.FuncDecl, starRet *ast.StarExpr, methodInfo *methodInfo) {
-	wrapperType := typeToString(starRet.X)
-	wrapperDef, ok := t.Structs[wrapperType]
-	if !ok {
-		logf("Skipping %v.%v: wrapper type %v not found", methodInfo.RecvTypeRaw, fd.Name.Name, wrapperType)
-		return
-	}
-
-	var itemsField, itemsType string
-	if field, ok := sliceToBeUsedForIteration[methodInfo.RecvType+"."+fd.Name.Name]; ok {
-		itemsField = field
-		if itemsType, ok = wrapperDef.Fields[itemsField]; !ok || !strings.HasPrefix(itemsType, "[]*") {
-			logf("Skipping %v.%v: specified items field %v not found or not of type []*T in wrapper %v", methodInfo.RecvTypeRaw, fd.Name.Name, itemsField, wrapperType)
-			return
-		}
-	} else if itemsField, itemsType, ok = findSinglePointerSliceField(wrapperDef); !ok {
-		logf("Skipping %v.%v: wrapper %v does not contain exactly one []*T field", methodInfo.RecvTypeRaw, fd.Name.Name, wrapperType)
-		return
-	}
-
-	testJSON, emptyReturnValue := "[]", "{}"
-	if jsonField, ok := wrapperDef.FieldJSON[itemsField]; ok && jsonField != "" {
-		testJSON = fmt.Sprintf(`{"%v": []}`, jsonField)
-	} else {
-		testJSON = fmt.Sprintf(`{"%v": []}`, lowerFirst(itemsField))
-	}
-	if val, ok := customTestJSON[fd.Name.Name]; ok {
-		testJSON = val
-	}
-
-	eltType := strings.TrimPrefix(itemsType, "[]")
-	if eltType == "string" {
-		emptyReturnValue = `""`
-	}
-	testJSON1 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v,%[1]v]", emptyReturnValue))       // Call 1 - return 3 items
-	testJSON2 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v,%[1]v,%[1]v]", emptyReturnValue)) // Call 1 part 2 - return 4 items
-	testJSON3 := strings.ReplaceAll(testJSON, "[]", fmt.Sprintf("[%v,%[1]v]", emptyReturnValue))             // Call 2 - return 2 items
-
-	m := &method{
-		RecvType:             methodInfo.RecvType,
-		RecvVar:              methodInfo.RecvVar,
-		ClientField:          methodInfo.ClientField,
-		MethodName:           fd.Name.Name,
-		IterMethod:           getIterName(methodInfo, fd.Name.Name),
-		Args:                 methodInfo.Args,
-		CallArgs:             methodInfo.CallArgs,
-		TestCallArgs:         methodInfo.TestCallArgs,
-		ZeroArgs:             methodInfo.ZeroArgs,
-		ReturnType:           eltType,
-		OptsType:             methodInfo.OptsType,
-		OptsName:             methodInfo.OptsName,
-		OptsIsPtr:            methodInfo.OptsIsPtr,
-		UseListCursorOptions: methodInfo.UseListCursorOptions,
-		UseListOptions:       methodInfo.UseListOptions,
-		UsePage:              methodInfo.UsePage,
-		UseAfter:             methodInfo.UseAfter,
-		UseCursor:            methodInfo.UseCursor,
-		WrappedItemsField:    itemsField,
-		TestJSON1:            testJSON1,
-		TestJSON2:            testJSON2,
-		TestJSON3:            testJSON3,
-	}
-	t.Methods = append(t.Methods, m)
+	_ = "STUB: not implemented"
+	return
 }
 
 func findSinglePointerSliceField(sd *structDef) (fieldName, fieldType string, ok bool) {
-	matches := []string{}
-	for name, typeStr := range sd.Fields {
-		if strings.HasPrefix(typeStr, "[]*") {
-			matches = append(matches, name)
-		}
-	}
-	if len(matches) != 1 {
-		return "", "", false
-	}
-	fieldName = matches[0]
-	return fieldName, sd.Fields[fieldName], true
+	_ = "STUB: not implemented"
+	return "", "", false
 }
 
-func lowerFirst(s string) string {
-	if s == "" {
-		return s
-	}
-	return strings.ToLower(s[:1]) + s[1:]
-}
+func lowerFirst(s string) string { _ = "STUB: not implemented"; return "" }
 
-func typeToString(expr ast.Expr) string {
-	switch x := expr.(type) {
-	case *ast.Ident:
-		return x.Name
-	case *ast.StarExpr:
-		return "*" + typeToString(x.X)
-	case *ast.SelectorExpr:
-		return typeToString(x.X) + "." + x.Sel.Name
-	case *ast.ArrayType:
-		return "[]" + typeToString(x.Elt)
-	case *ast.MapType:
-		return fmt.Sprintf("map[%v]%v", typeToString(x.Key), typeToString(x.Value))
-	default:
-		return ""
-	}
-}
+func typeToString(expr ast.Expr) string { _ = "STUB: not implemented"; return "" }
 
-func (t *templateData) dump() error {
-	if len(t.Methods) == 0 {
-		return nil
-	}
-
-	slices.SortStableFunc(t.Methods, func(a, b *method) int {
-		if a.RecvType != b.RecvType {
-			return strings.Compare(a.RecvType, b.RecvType)
-		}
-		return strings.Compare(a.MethodName, b.MethodName)
-	})
-
-	processTemplate := func(tmpl *template.Template, filename string) error {
-		var buf bytes.Buffer
-		if err := tmpl.Execute(&buf, t); err != nil {
-			return err
-		}
-		clean, err := format.Source(buf.Bytes())
-		if err != nil {
-			return fmt.Errorf("format.Source: %v\n%s", err, buf.String())
-		}
-		if isCheck() {
-			logf("Checking %v...", filename)
-			old, err := os.ReadFile(filename)
-			if err != nil {
-				if errors.Is(err, fs.ErrNotExist) {
-					return fmt.Errorf("Missing file: %v\n", filename)
-				}
-				return err
-			}
-
-			if !bytes.Equal(old, clean) {
-				return fmt.Errorf("Generated files are out of date. Please run go generate ./... and commit the results")
-			}
-			return nil
-		}
-
-		logf("Writing %v...", filename)
-		return os.WriteFile(filename, clean, 0o644)
-	}
-
-	if err := processTemplate(sourceTmpl, t.filename); err != nil {
-		return err
-	}
-	return processTemplate(testTmpl, strings.ReplaceAll(t.filename, ".go", "_test.go"))
-}
+func (t *templateData) dump() error { _ = "STUB: not implemented"; return nil }
 
 const doNotEditHeader = `// Code generated by gen-iterators; DO NOT EDIT.
 // Instead, please run "go generate ./..." as described here:
